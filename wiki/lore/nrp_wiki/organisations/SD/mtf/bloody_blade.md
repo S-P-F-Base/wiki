@@ -4,7 +4,7 @@ Date: 6 Октября 2025 г.
 
 # Общая информация
 
-!img[/static/images/lore/nrp_wiki/organisations/SD/mtf_bloody_blade.png]
+!img[lore/nrp_wiki/organisations/SD/mtf_bloody_blade.png]
 
 Наименование: Кровавый Клинок
 

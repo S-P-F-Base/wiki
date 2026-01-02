@@ -3,9 +3,10 @@ from .button_extension import ButtonExtension
 from .constant_extension import ConstExtension
 from .folder_tree_extension import FolderTreeExtension
 from .img_block_extension import ImgBlockExtension
+from .img_extension import ImgExtension
+from .img_url_extension import ImgUrlExtension
 from .lobotomy_extension import LobotomyExtension
 from .redact_extension import RedactExtension
-from .single_img_extension import SingleImgExtension
 from .small_text_extension import SmallTextExtension
 from .strikethrough_extension import StrikethroughExtension
 from .strip_comments_extension import StripCommentsExtension

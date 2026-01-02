@@ -8,4 +8,4 @@ Date: 26 Сентября 2025 г.
 - Grom
 - Cain
 
-!img[/static/map/world.png]
+!img[map/world.png]

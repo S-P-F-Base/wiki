@@ -5,11 +5,11 @@ Background: images/lore/nrp_wiki/organisations/Paradeus/Paradeus_BG.png
 
 # Paradeus
 
-!img[/static/images/lore/nrp_wiki/organisations/Paradeus/Paradeus_Logo.png]
+!img[lore/nrp_wiki/organisations/Paradeus/Paradeus_Logo.png]
 
 Найтос (иногда их называют "крещёными") -- это девушки или женщины (мужчин-найтос не существует. только некие "Зомби"), чьё сознание было физически воплощено и функционирует как нейронное облако. Это позволяет им взаимодействовать с цифровыми сетями, такими как тактические куклы или устанавливать прямую связь с другими найтос, но также делает их уязвимыми для взлома. Это биологическое нейронное облако получило название "Образ виртуального познания"  или "виртуальное сознание". Люди, превратившиеся в Найтов, в основном являются клонами массового производства, но также попадают к ним в результате торговли людьми и похищения выживших из Ящика Иасо. Также говорят, что их создают из трупов.
 
-!img[/static/images/lore/nrp_wiki/organisations/Paradeus/Paradeus1.png]
+!img[lore/nrp_wiki/organisations/Paradeus/Paradeus1.png]
 
 Все найтосы -- это побочные продукты попыток Уильяма создать пан-иммуносому  (кроме прото-найтоса Саны), но ни один из них не стал успешным экспериментом. Поскольку все известные найтосы считаются несовершенными, технически все они являются изомерами, хотя их редко называют именно так. По словам Морридоу и Грея, Немран -- "ненормальный" Найто, испытывающий эмоции, но не имеющий желаний. По словам Морридоу, отдельных Найто нельзя воссоздать после смерти, в отличие от тактических кукол.
 
@@ -17,9 +17,9 @@ Background: images/lore/nrp_wiki/organisations/Paradeus/Paradeus_BG.png
 
 Парадеус превосходят на голову абсолютно всех по технологиям. У них имеются множество боевых роботов, модификаций тела и вооружения, из-за чего сражение с ними привращается в бой высокой сложности.
 
-!img[/static/images/lore/nrp_wiki/organisations/Paradeus/Paradeus_machines.jpg]
+!img[lore/nrp_wiki/organisations/Paradeus/Paradeus_machines.jpg]
 
-!img[/static/images/lore/nrp_wiki/organisations/Paradeus/Paradeus_machines2.png]
+!img[lore/nrp_wiki/organisations/Paradeus/Paradeus_machines2.png]
 
 Иерархия (от высшего, к низшему):
 !folder[

@@ -4,7 +4,7 @@ Date: 30 Декабря 2025 г.
 
 # Георгий Корабельщиков "Кабан" - отвечающий за боевые операции
 
-!imgblock[/static/images/lore/etc_info/Kaban.png|left|350px,350px,hard]
+!imgblock[lore/etc_info/Kaban.png|left|350px,350px,hard]
 Вес: 165,1 кг
 Рост: 175 см
 Возраст: 51 год

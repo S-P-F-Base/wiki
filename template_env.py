@@ -11,7 +11,7 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 USE_ACCEL = os.getenv("FASTAPISTATIC") != "1"
 
 
-def static_with_version(file: str) -> str:
+def static_url(file: str) -> str:
     static_path = STATIC_DIR / file
     v = int(static_path.stat().st_mtime) if static_path.exists() else 0
 
@@ -22,4 +22,4 @@ def static_with_version(file: str) -> str:
         return f"/static/{file}?v={v}"
 
 
-templates.env.filters["ver"] = static_with_version
+templates.env.filters["ver"] = static_url

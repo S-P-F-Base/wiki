@@ -4,7 +4,7 @@ Date: 30 Декабря 2025 г.
 
 # Мелинда Андерсон "Кошель" - отвечающая за финансы
 
-!imgblock[/static/images/lore/etc_info/Koshel.png|left|350px,350px,hard]
+!imgblock[lore/etc_info/Koshel.png|left|350px,350px,hard]
 Вес: 76 кг
 Рост: 183 см
 Возраст: 55 лет

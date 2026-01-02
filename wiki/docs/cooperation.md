@@ -12,8 +12,8 @@ Date: 20 Сентября 2025 г.
 
 | Имя | Область вопросов         | Контакты | Аватар |
 |:---:|:------------------------:|:--------:|:------:|
-|Гром | Общие вопросы не <br> технического характера | Discord: `foxyr20`<br>Telegram: [Foxyr20](https://t.me/Foxyr20) | !tblimg[/static/images/avatar/foxyr20_d.png|128px,auto,hard] |
-|Cain | Любые вопросы технического характера <br> (серверы, код, интеграции) | Discord: `cainheretic` | !tblimg[/static/images/avatar/cain_d.png|128px,auto,hard] |
+|Гром | Общие вопросы не <br> технического характера | Discord: `foxyr20`<br>Telegram: [Foxyr20](https://t.me/Foxyr20) | !tblimg[avatar/foxyr20_d.png|128px,auto,hard] |
+|Cain | Любые вопросы технического характера <br> (серверы, код, интеграции) | Discord: `cainheretic` | !tblimg[avatar/cain_d.png|128px,auto,hard] |
 
 ---
 

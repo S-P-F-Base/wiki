@@ -13,9 +13,10 @@ from .extensions import (
     ConstExtension,
     FolderTreeExtension,
     ImgBlockExtension,
+    ImgExtension,
+    ImgUrlExtension,
     LobotomyExtension,
     RedactExtension,
-    SingleImgExtension,
     SmallTextExtension,
     StrikethroughExtension,
     StripCommentsExtension,
@@ -61,9 +62,10 @@ def wiki_page(request: Request, page: Path):
             "nl2br",  # Превращает одиночные \n в <br />
             WikiLinkExtension(),  # Поддержка [[url|name]] для вики-стилей
             ConstExtension(constants=Constants.get_all_const()),  # Константы для замены
+            ImgUrlExtension(),  # Для нормальной работы ссылок
             ImgBlockExtension(),  # Для блоков с картинками и текстом
             RedactExtension(),  # Для обфускации информации с сайта пока не заглянут в код
-            SingleImgExtension(),  # Макрос для картинок
+            ImgExtension(),  # Макрос для картинок
             ButtonExtension(),  # Работа с кнопками и их оформлением
             StripCommentsExtension(),  # В пизду комментарии, так же стрипает весь текст
             FolderTreeExtension(),  # Для создания красивых деревьев

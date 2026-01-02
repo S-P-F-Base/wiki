@@ -86,6 +86,6 @@ Date: 3 Октября 2025 г.
 
 `Начальник службы безопасности ЧВК S.P.F.`: Покров
 
-!imgblock[/static/images/hop_sig.png|left|128px,128px,hard]
+!imgblock[hop_sig.png|left|128px,128px,hard]
 Служба безопасности и дисциплины / Покров
 !endimgblock

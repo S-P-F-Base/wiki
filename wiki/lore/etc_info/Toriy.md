@@ -4,7 +4,7 @@ Date: 30 Декабря 2025 г.
 
 # Александра Грэм "Торий" - отвечающая за научный прогресс
 
-!imgblock[/static/images/lore/etc_info/Toriy.png|left|350px,350px,hard]
+!imgblock[lore/etc_info/Toriy.png|left|350px,350px,hard]
 Вес: 48,3 кг
 Рост: 128 см
 Возраст: 46 год

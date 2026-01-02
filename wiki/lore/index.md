@@ -5,7 +5,7 @@ Background: images/lore/background_lore.jpg
 
 # Предупреждение
 !!! red "Cain"
-    !imgblock[/static/images/avatar/сain_a.png|left|128px,128px,hard]
+    !imgblock[avatar/сain_a.png|left|128px,128px,hard]
     Просьба учитывать, что следующая информация является основной при написании сюжета сервера, нравится ли вам это или нет. Администрация !const[site_name] не считает, что лор и действия `Girls Frontline 2` хоть как-то вписываются в логические рамки. Весь лор и история сервера будет строиться только исходя из оригинального `Girls Frontline` не учитывая приквелы и сиквелы. Спасибо за понимание
     !endimgblock
 
@@ -20,4 +20,4 @@ Background: images/lore/background_lore.jpg
 Желаю удачи в прочтении и погружении
 !btn[/wiki/lore/rp_wiki|Вторая Wiki]
 
-!img[/static/images/lore/wiki_choice.jpg]
+!img[lore/wiki_choice.jpg]

@@ -4,7 +4,7 @@ Date: 6 Октября 2025 г.
 
 # Общая информация
 
-!img[/static/images/lore/nrp_wiki/organisations/SD/mtf_spiritual_eye.png]
+!img[lore/nrp_wiki/organisations/SD/mtf_spiritual_eye.png]
 
 Наименование: Духовное Око
 
