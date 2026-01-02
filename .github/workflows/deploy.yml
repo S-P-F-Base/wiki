@@ -1,0 +1,30 @@
+name: Deploy to SPF Server
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run deploy script on server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SPF_HOST }}
+          username: ${{ secrets.SPF_USER }}
+          key: ${{ secrets.SPF_SSH_KEY }}
+          script: |
+            cd /root/spf/game-api/
+            touch MAINTENANCE
+
+            sudo systemctl stop spf-game-api.service
+
+            git fetch origin master
+            git reset --hard origin/master
+
+            chmod -R o+rX static
+
+            sudo systemctl start spf-game-api.service
+
+            rm -f MAINTENANCE

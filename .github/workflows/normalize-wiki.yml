@@ -1,0 +1,64 @@
+name: Normalize wiki MD
+
+on:
+  push:
+    branches: [ master ]
+    paths: ["wiki/**/*.md"]
+
+permissions:
+  contents: write
+
+jobs:
+  update-dates:
+    if: ${{ !contains(github.event.head_commit.message, '[no-auto]') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Ensure updater exists
+        run: |
+          test -f scripts/normalize_wiki.py || { echo "scripts/normalize_wiki.py not found"; exit 1; }
+
+      - name: Run updater
+        run: python scripts/normalize_wiki.py
+
+      - name: Check for changes
+        id: changed
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Start ssh-agent
+        if: steps.changed.outputs.changed == 'true'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.AUTO_COMMIT_BOT_DEPLOY }}
+
+      - name: Add github.com to known_hosts
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Commit and push via SSH (deploy key bypass)
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          set -e
+          git config user.name "auto normalize"
+          git config user.email "auto-normalize@users.noreply.github.com"
+          git add ./wiki/
+          git commit -m "[no-auto] Normalize wiki"
+          git remote set-url origin git@github.com:S-P-F-Base/spf-base-site.git
+          git push origin HEAD:master

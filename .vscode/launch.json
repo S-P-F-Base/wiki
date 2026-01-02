@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Uvicorn (FastAPI) DEBUG",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "env": {
+                "DEBUG": "1",
+                "FASTAPISTATIC": "1"
+            },
+            "args": [
+                "app:app",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "9100"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Uvicorn (FastAPI)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "env": {
+                "FASTAPISTATIC": "1"
+            },
+            "args": [
+                "app:app",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "9100"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}

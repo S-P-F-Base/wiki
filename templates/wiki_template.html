@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>{{ title }}</title>
+
+    <meta property="og:title" content="S.P.F. Base wiki" />
+    <meta property="og:description" content="WIKI страница {{ title }}" />
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:image" content="https://spf-base.ru/static/images/logo/site.jpg" />
+    <meta property="og:url" content="https://spf-base.ru/" />
+    <meta property="og:type" content="website" />
+
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ 'css/main.css' | ver }}" />
+
+    <link rel="stylesheet" href="{{ 'css/wiki.css' | ver }}" />
+    <link rel="stylesheet" href="{{ 'css/corp-lobotomy.css' | ver }}" />
+</head>
+
+<body>
+    <div class="page-background" style="background-image: url('{{ background_url | ver}}');">
+        <header class="site-header">
+            <a class="brand" href="/">
+                <img class="brand-logo" src="/static/images/logo/site.jpg" alt="S.P.F. Base">
+                <span class="brand-title">S.P.F. Base</span>
+            </a>
+
+            <input id="nav-check" type="checkbox" class="nav-check" aria-hidden="true" />
+            <label for="nav-check" class="nav-toggle" aria-label="Открыть меню" role="button" tabindex="0">
+                <span class="nav-toggle-bar"></span>
+            </label>
+
+            <nav class="site-nav">
+                <a href="/wiki">Wiki</a>
+                <a href="/donate">Донат</a>
+                <a href="/discord">Discord</a>
+                <a href="/profile">Панель игрока</a>
+            </nav>
+        </header>
+
+        <div class="content-tile">
+            <div class="small">
+                Последнее изменение: {{ data }}
+            </div>
+
+            <main class="markdown-body">
+                {{ content|safe }}
+            </main>
+
+            <hr>
+
+            <a href="#" class="back-button" onclick="goBack()">← Назад</a>
+        </div>
+    </div>
+
+    <script>
+        function highlightById(decodedId) {
+            const el = document.getElementById(decodedId);
+            if (!el) return;
+            el.classList.remove("anchor-highlight");
+            void el.offsetWidth;
+            el.classList.add("anchor-highlight");
+            setTimeout(() => el.classList.remove("anchor-highlight"), 1500);
+        }
+
+        function highlightAnchor() {
+            const rawHash = window.location.hash;
+            if (!rawHash) return;
+            const decoded = decodeURIComponent(rawHash.slice(1));
+            highlightById(decoded);
+        }
+
+        document.addEventListener("DOMContentLoaded", highlightAnchor);
+
+        window.addEventListener("hashchange", highlightAnchor);
+
+        document.querySelectorAll("a[href^='#']").forEach(anchor => {
+            anchor.addEventListener("click", (e) => {
+                const rawHref = anchor.getAttribute("href");
+                const decoded = decodeURIComponent(rawHref.slice(1));
+                setTimeout(() => highlightById(decoded), 0);
+            });
+        });
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+    </script>
+
+    <script src="{{ 'js/corp-lobotomy.js' | ver }}"></script>
+</body>
+
+</html>
