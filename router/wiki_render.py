@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from markdown import Markdown
 
-from config import Config
+from data_control.constants import Constants
 from template_env import templates
 
 from .extensions import (
@@ -60,7 +60,7 @@ def wiki_page(request: Request, page: Path):
             "smarty",  # Типографические ковычки
             "nl2br",  # Превращает одиночные \n в <br />
             WikiLinkExtension(),  # Поддержка [[url|name]] для вики-стилей
-            ConstExtension(constants=Config.get_all_const()),  # Константы для замены
+            ConstExtension(constants=Constants.get_all_const()),  # Константы для замены
             ImgBlockExtension(),  # Для блоков с картинками и текстом
             RedactExtension(),  # Для обфускации информации с сайта пока не заглянут в код
             SingleImgExtension(),  # Макрос для картинок
