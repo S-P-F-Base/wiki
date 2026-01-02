@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse
 from markdown import Markdown
 
@@ -41,12 +41,21 @@ def wiki_page(request: Request, page: Path):
         md_path = md_path.with_suffix(".md")
 
     if not md_path.resolve().is_relative_to(WIKI_DIR.resolve()):
-        raise HTTPException(status_code=403, detail="Invalid path")
+        return Response(
+            content="Invalid path",
+            status_code=403,
+            media_type="text/html",
+        )
 
     try:
         content = md_path.read_text(encoding="utf-8")
+
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Page not found")
+        return Response(
+            content="Page not found",
+            status_code=404,
+            media_type="text/html",
+        )
 
     md = Markdown(
         extensions=[
