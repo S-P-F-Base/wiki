@@ -6,7 +6,7 @@ class Constants:
 
     @classmethod
     def req_from_over(cls) -> None:
-        resp = requests.get("127.0.0.1:9100/config")
+        resp = requests.get("http://127.0.0.1:9100/config")
         cls._data = resp.json()  # Похуй что может упасть если честно
 
     @classmethod
