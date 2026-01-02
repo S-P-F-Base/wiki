@@ -1,6 +1,6 @@
 Title: Выбор рассказчика
 Author: Grom, Cain
-Date: 3 Сентября 2025 г.
+Date: 2 Января 2026 г.
 Background: images/lore/background_lore.jpg
 
 # Предупреждение
