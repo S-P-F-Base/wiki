@@ -1,11 +1,9 @@
-Title: Лор
+Title: Хронология
 Author: Grom
 Date: 3 Сентября 2025 г.
 Background: images/lore/background_lore.jpg
 
 [TOC]
-
-# Хронология с гиперссылками на точные статьи
 
 ## 1905
 

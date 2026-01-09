@@ -1,170 +1,131 @@
-Title: Пример страницы
+Title: Тестовая страница вики
 Author: Cain
-Date: 1 Октября 2025 г.
-Background: secrets/hehe.jpg
+Date: 666 Адтября 666 г.
+Background: images/wallpaper.jpeg
+<!-- Выше это блок мета. Старайтесь не срать на него. Он чувствительный -->
+<!-- Title: - наименование страницы вики -->
+<!-- Author: - авторы. Перечисляются через запятую -->
+<!-- Date: - Добавить и не трогать. При залитии в репозиторий оно само поставит себя -->
+<!-- Background указывает на фон. Как и все блоки юзающие ссылку на изображение cwd = /static/ -->
+
+[TOC] <!-- Вставляется в самом начале файла под метой чтобы заставить работать левый блок страницы -->
 
 # Добро пожаловать
-Это пример страницы для **вики**. Ниже - демонстрация подключённых расширений.
+Это тестовая страница вики.
 
-!!! red "ВНИМАНИЕ"
-    Все `.md` файлы динамически подгружаются. Так что сервер для этого постоянно перезапускать не нужно
+Она призвана для просмотра что все расширения работаю корректно, и что вики не поплыла.
+Так же можете в принципе брать эту страницу за пример оформления.
 
----
-
-[TOC]
-
----
-
-## Таблицы
-
-| Имя     | Класс       | Ранг |
-|:-------:|------------:|:----:|
-| !tblimg[/static/secrets/hehe.jpg|64px,auto,hard] | AR Team | A |
-| UMP45   | 404 Squad   | B    |
-| G11     | Experimental| S    |
-
-| Имя   | Класс                                          | Ранг |
-|:------|-----------------------------------------------:|:----:|
-| M4A1  | AR Team                                        | A    |
-| UMP45 | !tblimg[/static/secrets/hehe.jpg|30%,auto,max] | B |
-| G11   | Experimental                                   | S    |
-
-Крайне не советую юзать картинки без выравнивания по центру и не с указанными размерами пикселей. Сверху причина этого
+<!-- 
+Все комментарии в md автоматически удаляются до обработки 
+-->
 
 ---
 
-## Картинки через !img
-
-!img[/static/secrets/base_grom.png]
-
-!img[/static/secrets/hehe.jpg|left|30%]
-
-!img[/static/secrets/hehe.jpg|right|200px,auto,hard]
-
----
-
-## Блоки изображений
-
-!imgblock[/static/secrets/hehe.jpg|left|70%,auto]
-Текст рядом с картинкой с `max` режимом
-!endimgblock
-
-!imgblock[/static/secrets/hehe.jpg|right|300px,200px,hard]
-А это `hard`, фиксированная ширина и высота
-!endimgblock
-
-!imgblock[/static/secrets/hehe.jpg|middle|100%,auto,hard]
-Большая картинка по центру, высота автоматом
-!endimgblock
+<!-- Проверка блоков сворачивания TOC -->
+# Проверка вложенности до 6-й глубины
+## Уровень 2
+### Уровень 3
+#### Уровень 4
+##### Уровень 5
+###### Уровень 6
 
 ---
 
-## WikiLink
-Можно сослаться так [[/wiki|Глав. стр]].
-
----
-
-## Блок кода
-
-```
-Очень длинный текст внутри кода Очень-очень-очень-очень-очень-очень-очень-очень-очень-очень длинный текст
-```
-
----
-
-## Блоки цветные
-
-!!! orange
-    Цвет
-
-!!! red
-    Цвет
-
-!!! green "Цветной с кастомным заголовком"
-    Цвет
-
-!!! blue ""
-    Цветной без заголовка
-
----
-
-## Сноски
-
-Вот текст со сноской.[^1]
-
-[^1]: Текст сноски.
-
----
-
-## Разделители
-
-`---`
-
----
-
-## Кнопочка
-
-!btn[https://youtu.be/E4WlUXrJgy4?si=5kLpaTltJ7F2-Eqh|OwO]
-
----
-
-## Константы
-
-!const[site_domain]
-
-!btn[!const[site_domain]|Тык]
-
----
-
-## Фолдеры
+# Папки фолдеры
+Призвано сделать указание папок более удобным и простым
 
 !folder[
-    /root/kill_all.py
-    /example.md
-    /wiki/ten_codes.md
+    /docs/index.md
+    /docs/install.md
+    /docs/configuration.md
+    /docs/faq.md
 ]
 
 !folder[
-    /god/root/kill_all.py
-    /god/example.md
-    /god/wiki/ten_codes.md
+    /src/main.py
+    /src/utils/helpers.py
+    /src/config/defaults.yaml
+    /README.md
+]
+
+!folder[
+    /wiki/index.md
+    /wiki/lore/factions.md
+    /wiki/lore/artifacts.md
+    /wiki/please_read_this_first.md
+]
+
+!folder[
+    /core/init.lua
+    /core/overengineered_system.lua
+    /core/old/do_not_touch.lua
+    /notes/why_it_works.md
+]
+
+!folder[
+    /root/v3.py
+    /root/final_v3.py
+    /root/final_v3_REAL.py
+    /root/final_v3_REAL_fixed.py
+    /root/final_v3_REAL_fixed2.py
+    /root/README_please.md
 ]
 
 ---
 
-## Мелкий текст
+# Использование темплейтов
+В связи с тем, что писать одно и тоже между блоками утомляет, а когда захочешь поменять оформление можно и вскрыться, было представлено новое средство! Темплейты (в прошлом варны)
 
-Текст маленький
--# Очень маленький
-
----
-
-## Оформление заблокированных блоков
-<!-- Можно и не указывать style при base -->
-!lob[
-style: base
-msg: Первая линия
-    Вторая линия
-    Последующие
-arr: 1,2,3,4,5
-]
+!template[test]
 
 ---
 
-!lob[
-style: subtle
-msg: Первая линия
-    Вторая линия
-    Последующие
-arr: 1,2,3,4,5
+# Использование диалоговых окон
+Теперь можно красиво оформлять диалоги, а не сосать пенисы!
+
+<!-- Структура такая
+!dialog_start[
+    ключ: left|right|center name="t" avatar=<base_img_url>
 ]
+
+ключ: бла бла бла <- Будет бабл с именем "t"
+@ключ name="???"
+@ключ avatar=<base_img_url>
+ключ: бла бла бла <- Будет бабл с именем "???"
+
+!dialog_end
+-->
+!dialog_start[
+    cain_0: left
+    cain: left name=Каин avatar=images/avatar/cain_a.png
+    cain_2: right name="Проверка пробела" avatar=images/avatar/cain_d.png
+    cain_3: center
+]
+cain_0: Ни имени, ни стыда
+
+cain: Тееест
+cain_2: Я будто знаю что писать
+cain_3: Бубубу
+
+@cain name="можно даже менять имя на лету"
+@cain avatar=images/avatar/cain_e.png
+cain: Как и аватарку
+
+!dialog_end
 
 ---
 
-!lob[
-style: neon
-msg: Первая линия
-    Вторая линия
-    Последующие
-arr: 1,2,3,4,5
-]
+# Данные удалены
+Можно не нарушая читаемости md файла цензурить некоторый текст
+
+К примеру !redact[У грома маленькая пиписька и импотенция]
+
+---
+# TODO
+Кнопки
+Авто кнопочки
+Кратинки
+Таблички
+Чё-то придумать с ten code
+

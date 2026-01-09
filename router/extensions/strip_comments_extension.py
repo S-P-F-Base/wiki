@@ -13,6 +13,7 @@ class StripCommentsPreprocessor(Preprocessor):
         stripped_lines = [line.rstrip() for line in text.split("\n")]
         while stripped_lines and not stripped_lines[0].strip():
             stripped_lines.pop(0)
+
         while stripped_lines and not stripped_lines[-1].strip():
             stripped_lines.pop()
 
