@@ -9,24 +9,50 @@ from markdown.treeprocessors import Treeprocessor
 TOC_TOKEN = "TOC_PLACEHOLDER__7d3b3f2a"
 
 
+class TocTreeExtension(Extension):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.toc_requested: bool = False
+
+    def extendMarkdown(self, md):
+        self.toc_requested = False
+
+        md.preprocessors.register(
+            TocMarkerPreprocessor(md, self),
+            "toc_marker",
+            27,
+        )
+        md.treeprocessors.register(
+            TocTreeprocessor(md, self),
+            "toc_tree",
+            15,
+        )
+
+        md.registerExtension(self)
+
+
 def slugify(text: str) -> str:
     base = re.sub(r"[^\w\- ]+", "", text, flags=re.UNICODE)
     base = re.sub(r"\s+", "-", base.strip().lower())
     if not base:
         base = hashlib.md5(text.encode("utf-8")).hexdigest()[:8]
-
     return base
 
 
 class TocMarkerPreprocessor(Preprocessor):
     RE_TOC = re.compile(r"^\s*\[TOC\]\s*$", re.IGNORECASE)
 
+    def __init__(self, md, ext: TocTreeExtension):
+        super().__init__(md)
+        self.ext = ext
+
     def run(self, lines: list[str]) -> list[str]:
         out: list[str] = []
+
         for line in lines:
             if self.RE_TOC.match(line):
+                self.ext.toc_requested = True
                 out.append(TOC_TOKEN)
-
             else:
                 out.append(line)
 
@@ -34,8 +60,17 @@ class TocMarkerPreprocessor(Preprocessor):
 
 
 class TocTreeprocessor(Treeprocessor):
+    def __init__(self, md, ext: TocTreeExtension):
+        super().__init__(md)
+        self.ext = ext
+
     def run(self, root):
+        if not self.ext.toc_requested:
+            self._remove_token(root)
+            return
+
         headers: list[tuple[int, str, str]] = []
+
         for el in root.iter():
             if el.tag in {"h1", "h2", "h3", "h4", "h5", "h6"}:
                 text = "".join(el.itertext()).strip()
@@ -52,7 +87,7 @@ class TocTreeprocessor(Treeprocessor):
                 headers.append((level, text, anchor))
 
         if not headers:
-            self._remove_token_paragraph(root)
+            self._remove_token(root)
             return
 
         toc_root = Element("div", {"class": "toc"})
@@ -78,34 +113,24 @@ class TocTreeprocessor(Treeprocessor):
             if ul is not None and len(ul) == 0:
                 li.remove(ul)
 
-        if not self._replace_token_paragraph_with(root, toc_root):
+        if not self._replace_token(root, toc_root):
             root.insert(0, toc_root)
 
-    def _replace_token_paragraph_with(self, root, new_el: Element) -> bool:
+    def _replace_token(self, root, new_el: Element) -> bool:
         for parent in root.iter():
-            children = list(parent)
-            for i, child in enumerate(children):
-                if child.tag == "p" and (
-                    "".join(child.itertext()).strip() == TOC_TOKEN
-                ):
+            for i, child in enumerate(list(parent)):
+                if self._contains_token(child):
                     parent.remove(child)
                     parent.insert(i, new_el)
                     return True
-
         return False
 
-    def _remove_token_paragraph(self, root) -> None:
+    def _remove_token(self, root) -> None:
         for parent in root.iter():
-            children = list(parent)
-            for child in children:
-                if child.tag == "p" and (
-                    "".join(child.itertext()).strip() == TOC_TOKEN
-                ):
+            for child in list(parent):
+                if self._contains_token(child):
                     parent.remove(child)
 
-
-class TocTreeExtension(Extension):
-    def extendMarkdown(self, md):
-        md.preprocessors.register(TocMarkerPreprocessor(md), "toc_marker", 27)
-        md.treeprocessors.register(TocTreeprocessor(md), "toc_tree", 15)
-        md.registerExtension(self)
+    @staticmethod
+    def _contains_token(el) -> bool:
+        return TOC_TOKEN in "".join(el.itertext())

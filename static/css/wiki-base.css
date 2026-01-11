@@ -17,10 +17,8 @@ body {
     line-height: 1.7;
 
     background:
-        linear-gradient(
-            rgba(14, 14, 14, 0.92),
-            rgba(14, 14, 14, 0.92)
-        ),
+        linear-gradient(rgba(14, 14, 14, 0.92),
+            rgba(14, 14, 14, 0.92)),
         var(--wiki-bg-image, none),
         var(--bg);
 
@@ -169,6 +167,29 @@ td {
 th {
     color: #ffb74d;
     text-align: left;
+}
+
+/* LINKS */
+.content a {
+    color: var(--border);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 152, 0, 0.35);
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.content a:hover,
+.content a:focus {
+    color: #ffb74d;
+    border-bottom-color: #ffb74d;
+}
+
+/* TEX */
+.missing {
+    color: #ff0000;
+    font-weight: 500;
+    font-family: ui-monospace, monospace;
 }
 
 /* FOOTER */

@@ -5,6 +5,13 @@ from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 
 
+class TemplateIncludeExtension(Extension):
+    def extendMarkdown(self, md):
+        md.preprocessors.register(
+            TemplateIncludePreprocessor(md), "template_include", 15
+        )
+
+
 class TemplateIncludePreprocessor(Preprocessor):
     RE = re.compile(r"(?<!\\)!template\[(?P<name>[^\]]+)\]")
 
@@ -20,7 +27,7 @@ class TemplateIncludePreprocessor(Preprocessor):
             template_file = (Path("wiki/_template") / f"{name}.md").resolve()
 
             if not template_file.exists():
-                out.append(f"Template '{name}' not found.")
+                out.append(f'<span class="missing">Template {name} not found</span>')
                 continue
 
             try:
@@ -31,10 +38,3 @@ class TemplateIncludePreprocessor(Preprocessor):
                 out.append(f"Error reading '{name}': {e}")
 
         return out
-
-
-class TemplateIncludeExtension(Extension):
-    def extendMarkdown(self, md):
-        md.preprocessors.register(
-            TemplateIncludePreprocessor(md), "template_include", 15
-        )

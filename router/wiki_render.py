@@ -8,10 +8,21 @@ from config import Constants
 from template_env import templates
 
 from .extensions import (
+    AutoButtonsExtension,
+    ButtonExtension,
+    CardExtension,
+    ColorExtension,
     ConstExtension,
     DialogExtension,
     FolderTreeExtension,
+    FootnoteExtension,
+    GridExtension,
+    ImageExtension,
     RedactExtension,
+    RegistryExtension,
+    RestrictedExtension,
+    SmallTextExtension,
+    StrikethroughExtension,
     StripCommentsExtension,
     TemplateIncludeExtension,
     TocTreeExtension,
@@ -56,6 +67,8 @@ def wiki_page(request: Request, page: Path):
             "meta",  # Заголовки-мета в начале файла (например, автор, дата)
             "smarty",  # Типографические ковычки
             "nl2br",  # Превращает одиночные \n в <br />
+            "tables",  # Markdown-таблицы
+            "footnotes",  # Кривые сноски
             # ---
             TocTreeExtension(),  # Автоматическое оглавление по заголовкам
             ConstExtension(constants=Constants.get_all_const()),  # Константы для замены
@@ -64,6 +77,17 @@ def wiki_page(request: Request, page: Path):
             TemplateIncludeExtension(),  # Вставка однотипных блоков из _template
             DialogExtension(),  # Обработка диалогов
             RedactExtension(),  # Позволяет динамически отредачить и засекретить информацию
+            RegistryExtension(),  # Расширение для особых типов таблиц
+            CardExtension(),  # Позволяет билдить карточки
+            ColorExtension(),  # Красить текст в разный цвет
+            SmallTextExtension(),  # Маленький текст
+            StrikethroughExtension(),  # Зачёрктуный текст
+            ButtonExtension(),  # Кнопочки
+            AutoButtonsExtension(wiki_dir=WIKI_DIR),  # Автоматические кнопочки
+            GridExtension(),  # Грид лейаут
+            ImageExtension(),  # Картиночки
+            RestrictedExtension(),  # Запрещённая информация
+            FootnoteExtension(),  # Менее кривые сноски
         ],
     )
 
@@ -71,7 +95,7 @@ def wiki_page(request: Request, page: Path):
     rendered_html = md.convert(content)
     meta = getattr(md, "Meta", {})
 
-    title = meta.get("title", [None])[0] or "ЗАБЫЛИ НАИМЕНОВАНИЕ УСТАНОВИТЬ"
+    title = meta.get("title", ["ЗАБЫЛИ НАИМЕНОВАНИЕ УСТАНОВИТЬ"])[0]
     date = meta.get("date", [None])[0]
     author = meta.get("author")
     background_url = meta.get("background", [None])[0]
