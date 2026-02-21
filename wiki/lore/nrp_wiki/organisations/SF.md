@@ -3,7 +3,6 @@ Author: Grom
 Date: 10 Февраля 2026 г.
 Background: images/lore/nrp_wiki/organisations/SF/SF_BG.jpg
 ButtonImage: images/lore/nrp_wiki/organisations/SF/logo_small.png
-ButtonDesc: Сангвис ферри
 
 # Sangvis Ferri
 
