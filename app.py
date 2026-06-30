@@ -38,6 +38,9 @@ if LOCAL_RUN:
         name="static",
     )
 
-app.include_router(overlord_api_router)
-app.include_router(wiki_index_router)
-app.include_router(wiki_render_router)
+for router in [
+    overlord_api_router,
+    wiki_index_router,
+    wiki_render_router,
+]:
+    app.include_router(router)
