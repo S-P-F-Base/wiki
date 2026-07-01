@@ -15,6 +15,7 @@ def wiki_page(request: Request, page: Path):
     md_path = WIKI_DIR / page
     if md_path.is_dir() or str(page).endswith("/"):
         md_path = md_path / "index.md"
+
     else:
         md_path = md_path.with_suffix(".md")
 
