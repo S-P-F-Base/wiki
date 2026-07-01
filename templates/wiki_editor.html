@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Редактор вики – {{ page }}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .toolbar {
+            background: #333;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            background: #555;
+            border: 1px solid #666;
+            color: #ddd;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: #666;
+        }
+
+        .save-btn {
+            background: #2a7a3b;
+        }
+
+        .main {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+
+        .editor-panel {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .resizer {
+            width: 6px;
+            background: #444;
+            cursor: col-resize;
+            flex-shrink: 0;
+            transition: background 0.15s;
+        }
+
+        .resizer:hover {
+            background: #777;
+        }
+
+        .preview-panel {
+            flex: 1;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        #textEditor {
+            flex: 1;
+            width: 100%;
+            background: #252526;
+            color: #ddd;
+            padding: 20px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            border: none;
+            resize: none;
+            outline: none;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 6px;
+            min-width: 400px;
+            color: #ddd;
+        }
+
+        .modal h3 {
+            margin-top: 0;
+        }
+
+        .modal label {
+            display: block;
+            margin: 8px 0 4px;
+            font-size: 13px;
+        }
+
+        .modal input,
+        .modal textarea,
+        .modal select {
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 8px;
+            background: #1e1e1e;
+            border: 1px solid #555;
+            color: #ddd;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="toolbar">
+        <button id="btnSave" class="save-btn">💾 Сохранить</button>
+        <button id="btnPreview">🔄 Обновить превью</button>
+        <span style="margin-left:auto;"></span>
+        <span id="pageStatus" style="font-size:12px;color:#aaa;margin-left:8px;"></span>
+        <span style="font-size:12px;color:#999;margin-left:4px;">ПКМ в редакторе — добавить блок</span>
+    </div>
+
+    <div class="main">
+        <div class="editor-panel">
+            <textarea id="textEditor" placeholder="Начните писать markdown..."></textarea>
+        </div>
+        <div class="resizer" id="resizer"></div>
+        <div class="preview-panel">
+            <iframe id="previewFrame" class="preview-frame" title="Предпросмотр"></iframe>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script src="{{ 'js/editor/resizer.js' | ver }}"></script>
+    <script src="{{ 'js/editor/blocks/button.js' | ver }}"></script>
+    <script src="{{ 'js/editor/preview.js' | ver }}"></script>
+    <script src="{{ 'js/editor/contextmenu.js' | ver }}"></script>
+    <script src="{{ 'js/editor/main.js' | ver }}"></script>
+</body>
+
+</html>
