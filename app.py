@@ -1,17 +1,14 @@
 import contextlib
-import os
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from config import Constants
 from router.overlord_api import router as overlord_api_router
-from router.wiki_editor import router as wiki_editor_router
 from router.wiki_index import router as wiki_index_router
 from router.wiki_render import router as wiki_render_router
 from scripts.index_wiki import build_index, is_index_stale
-
-LOCAL_RUN = os.getenv("FASTAPISTATIC") == "1"
+from template_env import LOCAL_RUN
 
 
 @contextlib.asynccontextmanager
@@ -41,7 +38,6 @@ if LOCAL_RUN:
 
 for router in [
     overlord_api_router,
-    wiki_editor_router,
     wiki_index_router,
     wiki_render_router,
 ]:
