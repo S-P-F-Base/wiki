@@ -1,5 +1,40 @@
-Title: Главная страница вики
+Title: SPF Base wiki
 Author: Cain
-Date: 11 Января 2026 г.
+Date: skull
+Background: images/wallpaper.jpeg
 
-!auto_buttons[sort=abc]
+# Основные разделы
+
+!grid[2]
+
+!button[
+    /wiki/nrp
+    NRP Википедия
+    Общая информация для ознакомления игроков
+]
+
+!grid_step
+
+!button[
+    /wiki/rp
+    RP Википедия
+    Всеобщие знания мира персонажей
+]
+
+!grid_step
+
+!button[
+    /wiki/guides
+    Гайды
+    Руководства к механикам на проекте
+]
+
+!grid_step
+
+!button[
+    /wiki/rules
+    Правила
+    Правила проекта
+]
+
+!grid_end
