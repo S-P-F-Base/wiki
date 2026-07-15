@@ -32,47 +32,50 @@ from ..extensions import (
 BASE_DIR = Path(__file__).resolve().parents[2]
 WIKI_DIR = BASE_DIR / "wiki"
 
-_MD = Markdown(
-    extensions=[
-        # ---
-        "fenced_code",  # Блоки кода через тройные кавычки (```), как на GitHub
-        "tables",  # Markdown-таблицы
-        "smarty",  # Типографические ковычки
-        "nl2br",  # Превращает одиночные \n в <br />
-        "tables",  # Markdown-таблицы
-        "footnotes",  # Кривые сноски
-        # ---
-        TocTreeExtension(),  # Автоматическое оглавление по заголовкам
-        ConstExtension(constants=Constants.get_all_const()),  # Константы для замены
-        StripCommentsExtension(),  # Очистка комментариев
-        FolderTreeExtension(),  # Красивое оформление путей и папок
-        HierarchyExtension(
-            branch_threshold=3,
-            max_chain_length=4,
-        ),  # Адаптивные иерархические схемы: цепочки и ветки
-        TemplateIncludeExtension(),  # Вставка однотипных блоков из wiki/_tech/template
-        DialogExtension(),  # Обработка диалогов
-        RedactExtension(),  # Позволяет динамически отредачить и засекретить информацию
-        RegistryExtension(),  # Расширение для особых типов таблиц
-        CardExtension(),  # Позволяет билдить карточки
-        ColorExtension(),  # Красить текст в разный цвет
-        SmallTextExtension(),  # Маленький текст
-        StrikethroughExtension(),  # Зачёрктуный текст
-        ButtonExtension(),  # Кнопочки
-        AutoButtonsExtension(wiki_dir=WIKI_DIR),  # Автоматические кнопочки
-        GridExtension(),  # Грид лейаут
-        ImageExtension(),  # Картиночки
-        RestrictedExtension(),  # Запрещённая информация
-        AutoLinkExtension(autolinks_path=WIKI_DIR / "_tech" / "autolinks.md"),
-        LinkPreviewExtension(previews_path=WIKI_DIR / "_tech" / "link_previews.md"),
-        FootnoteExtension(),  # Менее кривые сноски
-        WikiMetaExtension(),  # Заголовки-мета в начале файла (например, автор, дата)
-    ],
-)
+
+def get_markdown_eng() -> Markdown:
+    return Markdown(
+        extensions=[
+            # ---
+            "fenced_code",  # Блоки кода через тройные кавычки (```), как на GitHub
+            "tables",  # Markdown-таблицы
+            "smarty",  # Типографические ковычки
+            "nl2br",  # Превращает одиночные \n в <br />
+            "tables",  # Markdown-таблицы
+            "footnotes",  # Кривые сноски
+            # ---
+            TocTreeExtension(),  # Автоматическое оглавление по заголовкам
+            ConstExtension(constants=Constants.get_all_const()),  # Константы для замены
+            StripCommentsExtension(),  # Очистка комментариев
+            FolderTreeExtension(),  # Красивое оформление путей и папок
+            HierarchyExtension(
+                branch_threshold=3,
+                max_chain_length=4,
+            ),  # Адаптивные иерархические схемы: цепочки и ветки
+            TemplateIncludeExtension(),  # Вставка однотипных блоков из wiki/_tech/template
+            DialogExtension(),  # Обработка диалогов
+            RedactExtension(),  # Позволяет динамически отредачить и засекретить информацию
+            RegistryExtension(),  # Расширение для особых типов таблиц
+            CardExtension(),  # Позволяет билдить карточки
+            ColorExtension(),  # Красить текст в разный цвет
+            SmallTextExtension(),  # Маленький текст
+            StrikethroughExtension(),  # Зачёрктуный текст
+            ButtonExtension(),  # Кнопочки
+            AutoButtonsExtension(wiki_dir=WIKI_DIR),  # Автоматические кнопочки
+            GridExtension(),  # Грид лейаут
+            ImageExtension(),  # Картиночки
+            RestrictedExtension(),  # Запрещённая информация
+            AutoLinkExtension(autolinks_path=WIKI_DIR / "_tech" / "autolinks.md"),
+            LinkPreviewExtension(previews_path=WIKI_DIR / "_tech" / "link_previews.md"),
+            FootnoteExtension(),  # Менее кривые сноски
+            WikiMetaExtension(),  # Заголовки-мета в начале файла (например, автор, дата)
+        ],
+    )
 
 
 def get_wiki_page(
-    md_path: Path, content: str
+    md_path: Path,
+    content: str,
 ) -> tuple[
     str,
     str,
@@ -80,10 +83,11 @@ def get_wiki_page(
     list[str] | None,
     str | None,
 ]:
-    setattr(_MD, "current_file", md_path)
-    rendered_html = _MD.convert(content)
+    md = get_markdown_eng()
+    setattr(md, "current_file", md_path)
+    rendered_html = md.convert(content)
 
-    meta: dict[str, str] = getattr(_MD, "wiki_meta", {})
+    meta: dict[str, str] = getattr(md, "wiki_meta", {})
 
     title = meta.get("title", "ЗАБЫЛИ НАИМЕНОВАНИЕ УСТАНОВИТЬ")
 
