@@ -103,6 +103,7 @@ META_KEYS = {
     "background",
     "buttonimage",
     "buttondesc",
+    "aiuse",
 }
 
 
@@ -219,7 +220,9 @@ def hierarchy_token_parts(token: str) -> tuple[str | None, str | None]:
     declared = HIERARCHY_NODE_DECL_RE.match(token)
     if declared:
         node_id = declared.group("id")
-        fields = split_hierarchy_fields(unescape_hierarchy_value(declared.group("label")))
+        fields = split_hierarchy_fields(
+            unescape_hierarchy_value(declared.group("label"))
+        )
         title = fields[0].strip() if fields else node_id
         subtitle = fields[1].strip() if len(fields) > 1 else ""
         text = collapse_spaces(" ".join(part for part in (title, subtitle) if part))
