@@ -12,3 +12,7 @@ Background: images/wallpaper.jpeg
 !card_end
 
 ---
+
+# TODO: СДЕЛАТЬ ЧТО-ТО БОЛЕЕ КРАСИВОЕ БЛЯТЬ
+
+!auto_buttons[sort=abc]
