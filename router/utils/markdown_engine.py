@@ -82,6 +82,7 @@ def get_wiki_page(
     str | None,
     list[str] | None,
     str | None,
+    str | None,
 ]:
     md = get_markdown_eng()
     setattr(md, "current_file", md_path)
@@ -99,4 +100,8 @@ def get_wiki_page(
 
     background_url = meta.get("background")
 
-    return rendered_html, title, date, author, background_url
+    ai_use = meta.get("aiuse", None)
+    if ai_use:
+        ai_use = ai_use.lower()
+
+    return rendered_html, title, date, author, background_url, ai_use
