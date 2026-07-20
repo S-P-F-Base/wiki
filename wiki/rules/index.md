@@ -12,3 +12,5 @@ Background: images/wallpaper.jpeg
 !card_end
 
 ---
+
+!auto_buttons[sort=abc]
