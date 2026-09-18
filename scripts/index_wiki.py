@@ -19,7 +19,7 @@ INDEXER_FILE = Path(__file__).resolve()
 
 
 # Regex
-WORD_RE = re.compile(r"[a-zA-Zа-яА-ЯёЁ0-9]{2,}", re.U)
+WORD_RE = re.compile(r"[a-zA-Zа-яА-ЯёЁ0-9]{2,}", re.UNICODE)
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*)\s*$")
 META_KV_RE = re.compile(r"^([A-Za-z][A-Za-z0-9_]*)\s*:\s*(.+?)\s*$")
@@ -47,7 +47,7 @@ DIALOG_PARTICIPANT_RE = re.compile(
     (?P<opts>.*)
     $
     """,
-    re.X,
+    re.VERBOSE,
 )
 DIALOG_SAY_RE = re.compile(r"^\s*([^:]+)\s*:\s*(.+?)\s*$")
 DIALOG_AT_RE = re.compile(r"^\s*@([^ ]+)\s*(.*)\s*$")
@@ -62,7 +62,7 @@ OPTION_RE = re.compile(
         ([^\s]+)
     )
     """,
-    re.X,
+    re.VERBOSE,
 )
 
 FOLDER_START_RE = re.compile(r"^\s*!folder\[\s*$")
@@ -81,14 +81,6 @@ IMAGE_FLOAT_BREAK_RE = re.compile(r"^\s*!image_float_break\s*$")
 
 BUTTON_START_RE = re.compile(r"^\s*!button\[\s*$")
 AUTO_BUTTONS_RE = re.compile(r"^\s*!auto_buttons\b")
-HIERARCHY_START_RE = re.compile(r"^\s*!hierarchy\s*$")
-HIERARCHY_END_RE = re.compile(r"^\s*!hierarchy_end\s*$")
-HIERARCHY_EDGE_RE = re.compile(r"^\s*(?P<src>.+?)\s*-->\s*(?P<dst>.+?)\s*$")
-HIERARCHY_COMMENT_RE = re.compile(r"^\s*(#|//)")
-HIERARCHY_NODE_ID_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_-]*$")
-HIERARCHY_NODE_DECL_RE = re.compile(
-    r'^(?P<id>[A-Za-z_][A-Za-z0-9_-]*)\s*\[\s*"(?P<label>(?:\\.|[^"\\])*)"\s*\]\s*$'
-)
 
 TEMPLATE_RE = re.compile(r"^\s*!template\[")
 CLOSE_BRACKET_RE = re.compile(r"^\s*]\s*$")
@@ -172,110 +164,6 @@ def sanitize_text(text: str) -> str:
     text = strip_inline_code(text)
     text = strip_footnote_refs(text)
     return collapse_spaces(text)
-
-
-def split_hierarchy_fields(value: str) -> list[str]:
-    out: list[str] = []
-    current: list[str] = []
-    escaped = False
-
-    for ch in value:
-        if escaped:
-            current.append(ch)
-            escaped = False
-            continue
-
-        if ch == "\\":
-            escaped = True
-            continue
-
-        if ch == "|":
-            out.append("".join(current))
-            current = []
-            continue
-
-        current.append(ch)
-
-    if escaped:
-        current.append("\\")
-
-    out.append("".join(current))
-    return out
-
-
-def unescape_hierarchy_value(value: str) -> str:
-    return (
-        value.replace(r"\\", "\\")
-        .replace(r"\"", '"')
-        .replace(r"\n", "\n")
-        .replace(r"\t", "\t")
-    )
-
-
-def hierarchy_token_parts(token: str) -> tuple[str | None, str | None]:
-    token = token.strip()
-    if not token:
-        return None, None
-
-    declared = HIERARCHY_NODE_DECL_RE.match(token)
-    if declared:
-        node_id = declared.group("id")
-        fields = split_hierarchy_fields(
-            unescape_hierarchy_value(declared.group("label"))
-        )
-        title = fields[0].strip() if fields else node_id
-        subtitle = fields[1].strip() if len(fields) > 1 else ""
-        text = collapse_spaces(" ".join(part for part in (title, subtitle) if part))
-        return node_id, text or node_id
-
-    if HIERARCHY_NODE_ID_RE.fullmatch(token):
-        return token, None
-
-    return None, None
-
-
-def extract_hierarchy_texts(block_lines: list[str]) -> list[str]:
-    labels: dict[str, str] = {}
-    ordered: list[str] = []
-    seen: set[str] = set()
-
-    for raw in block_lines:
-        line = raw.strip()
-        if not line or HIERARCHY_COMMENT_RE.match(line):
-            continue
-
-        edge_match = HIERARCHY_EDGE_RE.match(line)
-        tokens = [line]
-        if edge_match:
-            tokens = [edge_match.group("src"), edge_match.group("dst")]
-
-        for token in tokens:
-            node_id, text = hierarchy_token_parts(token)
-            if node_id and text:
-                labels[node_id] = text
-
-    for raw in block_lines:
-        line = raw.strip()
-        if not line or HIERARCHY_COMMENT_RE.match(line):
-            continue
-
-        edge_match = HIERARCHY_EDGE_RE.match(line)
-        tokens = [line]
-        if edge_match:
-            tokens = [edge_match.group("src"), edge_match.group("dst")]
-
-        for token in tokens:
-            node_id, text = hierarchy_token_parts(token)
-            resolved = text
-            if node_id and not resolved:
-                resolved = labels.get(node_id)
-
-            resolved = collapse_spaces(resolved or "")
-            if resolved and resolved not in seen:
-                seen.add(resolved)
-                ordered.append(resolved)
-
-    return ordered
 
 
 # Data model
@@ -548,21 +436,6 @@ def index_page(md_path: Path) -> dict:
             i += 1
             continue
 
-        if HIERARCHY_START_RE.match(s):
-            hierarchy_lines: list[str] = []
-            i += 1
-
-            while i < len(lines) and not HIERARCHY_END_RE.match(lines[i].strip()):
-                hierarchy_lines.append(lines[i])
-                i += 1
-
-            for text in extract_hierarchy_texts(hierarchy_lines):
-                push_text(text, kind="hierarchy")
-
-            if i < len(lines) and HIERARCHY_END_RE.match(lines[i].strip()):
-                i += 1
-            continue
-
         m_h = HEADING_RE.match(line)
         if m_h:
             txt = sanitize_text(m_h.group(2))
@@ -654,9 +527,7 @@ def index_page(md_path: Path) -> dict:
 # Index
 def is_template_path(path: Path) -> bool:
     parts = set(path.parts)
-    if "_tech" in parts:
-        return True
-    return False
+    return "_tech" in parts
 
 
 def build_index():

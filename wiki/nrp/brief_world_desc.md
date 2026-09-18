@@ -2,7 +2,7 @@ Title: Вкратце о мире
 Author: Cain
 Date: skull
 Background: images/wallpaper.jpeg
-ButtonDesc:Всё, что нужно знать о мире проекта, чтобы начать играть.
+ButtonDesc: Всё, что нужно знать о мире проекта, чтобы начать играть.
 
 [TOC]
 
