@@ -8,7 +8,6 @@ from .dialog_extension import DialogExtension
 from .folder_tree_extension import FolderTreeExtension
 from .footnote_extension import FootnoteExtension
 from .grid_extension import GridExtension
-from .hierarchy_extension import HierarchyExtension
 from .image_extension import ImageExtension
 from .link_preview_extension import LinkPreviewExtension
 from .meta_extension import WikiMetaExtension
@@ -20,3 +19,27 @@ from .strikethrough_extension import StrikethroughExtension
 from .strip_comments_extension import StripCommentsExtension
 from .template_include_extension import TemplateIncludeExtension
 from .toc_tree_extension import TocTreeExtension
+
+__all__ = [
+    "AutoButtonsExtension",
+    "AutoLinkExtension",
+    "ButtonExtension",
+    "CardExtension",
+    "ColorExtension",
+    "ConstExtension",
+    "DialogExtension",
+    "FolderTreeExtension",
+    "FootnoteExtension",
+    "GridExtension",
+    "ImageExtension",
+    "LinkPreviewExtension",
+    "RedactExtension",
+    "RegistryExtension",
+    "RestrictedExtension",
+    "SmallTextExtension",
+    "StrikethroughExtension",
+    "StripCommentsExtension",
+    "TemplateIncludeExtension",
+    "TocTreeExtension",
+    "WikiMetaExtension",
+]

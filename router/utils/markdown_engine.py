@@ -15,7 +15,6 @@ from ..extensions import (
     FolderTreeExtension,
     FootnoteExtension,
     GridExtension,
-    HierarchyExtension,
     ImageExtension,
     LinkPreviewExtension,
     RedactExtension,
@@ -48,10 +47,6 @@ def get_markdown_eng() -> Markdown:
             ConstExtension(constants=Constants.get_all_const()),  # Константы для замены
             StripCommentsExtension(),  # Очистка комментариев
             FolderTreeExtension(),  # Красивое оформление путей и папок
-            HierarchyExtension(
-                branch_threshold=3,
-                max_chain_length=4,
-            ),  # Адаптивные иерархические схемы: цепочки и ветки
             TemplateIncludeExtension(),  # Вставка однотипных блоков из wiki/_tech/template
             DialogExtension(),  # Обработка диалогов
             RedactExtension(),  # Позволяет динамически отредачить и засекретить информацию
@@ -82,6 +77,7 @@ def get_wiki_page(
     str | None,
     list[str] | None,
     str | None,
+    str | None,
 ]:
     md = get_markdown_eng()
     setattr(md, "current_file", md_path)
@@ -99,4 +95,8 @@ def get_wiki_page(
 
     background_url = meta.get("background")
 
-    return rendered_html, title, date, author, background_url
+    ai_use = meta.get("aiuse", None)
+    if ai_use:
+        ai_use = ai_use.lower()
+
+    return rendered_html, title, date, author, background_url, ai_use
