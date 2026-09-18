@@ -35,10 +35,6 @@ Scarlet Dawn (aka Алый рассвет) - частная научно-исс�
 
 # Непубличные материалы
 
-Кнопки на подвал SD
-
-!card_end
-
 !auto_buttons[sort=abc]
 
-
+!card_end
