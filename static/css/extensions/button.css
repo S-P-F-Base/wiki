@@ -76,3 +76,46 @@
     font-size: 0.82rem;
     color: var(--muted);
 }
+
+.card .wiki-button {
+    position: relative;
+    margin: 0;
+    padding: 0.85rem 3.4rem 0.85rem 0.9rem;
+
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+}
+
+.card .wiki-button::before {
+    display: none;
+}
+
+.card .wiki-button::after {
+    content: "›";
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 2.8rem;
+
+    display: grid;
+    place-items: center;
+
+    border-left: 1px solid rgba(255, 152, 0, 0.14);
+
+    color: var(--border);
+    font-size: 1.45rem;
+    font-weight: 500;
+}
+
+.card .wiki-button:hover {
+    background: rgba(255, 255, 255, 0.035);
+    transform: none;
+}
+
+.card .wiki-button:hover::after {
+    background: rgba(255, 152, 0, 0.06);
+}

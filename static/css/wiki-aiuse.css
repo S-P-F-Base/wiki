@@ -1,80 +1,87 @@
-/* AIUSE ICON */
+/* AI USE ICON */
+
+.aiuse-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
 .aiuse-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: help;
+
     line-height: 1;
-    vertical-align: middle;
+    cursor: help;
+    color: #b0b0b0;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .aiuse-badge svg {
     display: block;
     width: 32px;
     height: 32px;
-    transition: color 0.2s ease;
     flex-shrink: 0;
 }
 
-/* Цвета */
-.aiuse-none {
-    color: #888;
+.aiuse-wrapper:hover .aiuse-badge,
+.aiuse-wrapper.is-open .aiuse-badge {
+    color: #fff;
 }
 
-.aiuse-low {
-    color: #4caf50;
-}
 
-.aiuse-medium {
-    color: #ffc107;
-}
-
-.aiuse-high {
-    color: #f44336;
-}
-
-/* AIUSE CUSTOM POPUP */
-.aiuse-wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    cursor: help;
-}
+/* POPUP */
 
 .aiuse-popup {
     position: absolute;
     top: calc(100% + 12px);
     left: 50%;
-    transform: translateX(-50%) scale(0.92);
-    min-width: 200px;
-    max-width: 300px;
-    padding: 0.7rem 0.9rem;
+
+    min-width: 240px;
+    max-width: 340px;
+    padding: 0.75rem 0.9rem;
+
     background: #1a1a1a;
     border: 1px solid #2a2a2a;
     border-radius: 10px;
+
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+
+    color: #ddd;
+    font-size: 0.8rem;
+    font-weight: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-align: left;
+    text-transform: none;
+
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+
+    transform: translateX(-50%) scale(0.94);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+
     z-index: 1000;
-    text-align: left;
-    font-weight: normal;
-    text-transform: none;
-    letter-spacing: normal;
-    color: #ddd;
-    font-size: 0.8rem;
-    line-height: 1.5;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
 .aiuse-popup::after {
     content: "";
+
     position: absolute;
     bottom: 100%;
     left: 50%;
+
     transform: translateX(-50%);
+
     border: 6px solid transparent;
     border-bottom-color: #1a1a1a;
 }
@@ -83,72 +90,68 @@
 .aiuse-wrapper.is-open .aiuse-popup {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) scale(1);
     pointer-events: auto;
+
+    transform: translateX(-50%) scale(1);
 }
 
+
+/* CONTENT */
+
 .aiuse-popup-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.4rem;
-    padding-bottom: 0.3rem;
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.4rem;
+
     border-bottom: 1px solid #2a2a2a;
-    font-weight: 600;
+
     color: #fff;
     font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .aiuse-popup-title {
     font-size: 0.85rem;
-    word-break: break-word;
 }
 
-.aiuse-popup-body p {
-    margin: 0.3rem 0;
-    color: #ccc;
+.aiuse-entry+.aiuse-entry {
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+
+    border-top: 1px solid #252525;
 }
 
-.aiuse-popup-body strong {
+.aiuse-entry strong {
+    display: block;
+
+    margin-bottom: 0.15rem;
+
     color: #fff;
+    font-size: 0.78rem;
 }
 
-.aiuse-popup-note {
-    margin-top: 0.5rem !important;
-    padding-top: 0.3rem;
-    border-top: 1px solid #222;
-    font-size: 0.7rem;
-    color: #888;
-    font-style: italic;
+.aiuse-entry p {
+    margin: 0;
+
+    color: #ccc;
+    overflow-wrap: break-word;
 }
 
-/* МОБИЛЬНАЯ АДАПТАЦИЯ */
+
+/* MOBILE */
+
 @media (max-width: 480px) {
     .aiuse-popup {
-        left: 50%;
-        transform: translateX(-50%) scale(0.92);
         min-width: unset;
-        max-width: 85vw;
-        padding: 0.6rem 0.8rem;
+        width: max-content;
+        max-width: min(85vw, 340px);
+
+        padding: 0.65rem 0.8rem;
+
         font-size: 0.75rem;
     }
 
-    .aiuse-wrapper:hover .aiuse-popup,
-    .aiuse-wrapper.is-open .aiuse-popup {
-        transform: translateX(-50%) scale(1);
-    }
-
-    .aiuse-popup::after {
-        left: 50%;
-    }
-
     .aiuse-popup-header {
-        justify-content: center;
+        text-align: center;
         font-size: 0.8rem;
-    }
-
-    .aiuse-popup-body p {
-        text-align: justify;
-        hyphens: auto;
     }
 }

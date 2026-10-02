@@ -14,6 +14,19 @@ from .block_utils import (
     push_suffix_block,
 )
 
+AI_IMAGE_META = {
+    "gen": {
+        "mark": "ИИ",
+        "title": "Сгенерировано с использованием ИИ",
+        "description": "Изображение создано с использованием генеративного ИИ.",
+    },
+    "ass": {
+        "mark": "ИИ ассист",
+        "title": "Обработано с использованием ИИ",
+        "description": "ИИ использовался при обработке или доработке изображения.",
+    },
+}
+
 
 class ImageExtension(Extension):
     def extendMarkdown(self, md):
@@ -53,6 +66,7 @@ class ImageBlockProcessor(BlockProcessor):
 
         for i in range(start_idx + 1, len(lines)):
             line = lines[i]
+
             if self.END_RE.match(line.strip()):
                 push_suffix_block(blocks, lines[i + 1 :])
                 ended = True
@@ -64,6 +78,7 @@ class ImageBlockProcessor(BlockProcessor):
         while blocks and not ended:
             blk = blocks.pop(0)
             blk_lines = blk.splitlines()
+
             end_idx = find_end_index(blk_lines, self.END_RE)
 
             if end_idx is None:
@@ -91,32 +106,89 @@ class ImageBlockProcessor(BlockProcessor):
         wrapper.set("class", self._build_class(args))
 
         if "width" in args:
-            wrapper.set("style", f"--img-width:{self._normalize_px(args['width'])};")
+            wrapper.set(
+                "style",
+                f"--img-width:{self._normalize_px(args['width'])};",
+            )
 
-        img = etree.SubElement(wrapper, "img")
+        image_content = etree.SubElement(wrapper, "span")
+        image_content.set("class", "wiki-image-content")
+
+        img = etree.SubElement(image_content, "img")
         img.set("src", static_url(url))
         img.set("alt", args.get("alt", ""))
 
         if args.get("lazy") == "true":
             img.set("loading", "lazy")
 
+        self._add_ai_meta(image_content, args)
+
         return True
 
     def _parse_args(self, lines):
         out = {}
+
         for line in lines:
-            if "=" in line:
-                k, v = line.split("=", 1)
-                out[k.strip().lower()] = v.strip()
+            if "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+
+            out[key.strip().lower()] = value.strip()
 
         return out
 
     def _build_class(self, args):
-        cls = ["wiki-image"]
-        if "align" in args:
-            cls.append(f"align-{args['align']}")
+        classes = ["wiki-image"]
 
-        return " ".join(cls)
+        if "align" in args:
+            classes.append(f"align-{args['align'].lower()}")
+
+        return " ".join(classes)
+
+    def _add_ai_meta(self, parent, args):
+        ai_value = args.get("ai")
+
+        if ai_value is None:
+            return
+
+        ai_value = ai_value.lower()
+
+        if ai_value == "none":
+            return
+
+        meta = AI_IMAGE_META.get(ai_value)
+
+        if meta is None:
+            meta = {
+                "mark": "ИИ?",
+                "title": "Неизвестное значение ИИ",
+                "description": (
+                    f"Неизвестное значение '{ai_value}' для метаданных изображения."
+                ),
+            }
+
+        ai_wrapper = etree.SubElement(parent, "span")
+        ai_wrapper.set(
+            "class",
+            f"wiki-image-ai-wrapper wiki-image-ai-{ai_value}",
+        )
+
+        badge = etree.SubElement(ai_wrapper, "span")
+        badge.set("class", "wiki-image-ai-badge")
+        badge.set("aria-label", meta["title"])
+        badge.text = meta["mark"]
+
+        popup = etree.SubElement(ai_wrapper, "span")
+        popup.set("class", "wiki-image-ai-popup")
+
+        popup_title = etree.SubElement(popup, "span")
+        popup_title.set("class", "wiki-image-ai-popup-title")
+        popup_title.text = meta["title"]
+
+        popup_text = etree.SubElement(popup, "span")
+        popup_text.set("class", "wiki-image-ai-popup-text")
+        popup_text.text = meta["description"]
 
     def _normalize_px(self, value):
         return f"{value}px" if value.isdigit() else value
@@ -137,11 +209,21 @@ class ImageFloatBreakProcessor(BlockProcessor):
         if idx is None:
             return True
 
-        parse_prefix_blocks(self.parser, parent, lines[:idx])
+        parse_prefix_blocks(
+            self.parser,
+            parent,
+            lines[:idx],
+        )
 
         div = etree.SubElement(parent, "div")
-        div.set("class", "wiki-image-float-break")
+        div.set(
+            "class",
+            "wiki-image-float-break",
+        )
 
-        push_suffix_block(blocks, lines[idx + 1 :])
+        push_suffix_block(
+            blocks,
+            lines[idx + 1 :],
+        )
 
         return True

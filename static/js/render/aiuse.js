@@ -1,34 +1,49 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const wrappers = document.querySelectorAll('.aiuse-wrapper');
-    let activeWrapper = null;
+document.addEventListener("DOMContentLoaded", () => {
+    const wrappers = document.querySelectorAll(".wiki-image-ai-wrapper");
+    let active = null;
 
     function closeAll() {
-        if (activeWrapper) {
-            activeWrapper.classList.remove('is-open');
-            activeWrapper = null;
+        if (!active) {
+            return;
         }
+
+        active.classList.remove("is-open");
+        active = null;
     }
 
-    wrappers.forEach(wrapper => {
-        wrapper.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (this.classList.contains('is-open')) {
-                this.classList.remove('is-open');
-                activeWrapper = null;
+    wrappers.forEach((wrapper) => {
+        const badge = wrapper.querySelector(".wiki-image-ai-badge");
+
+        if (!badge) {
+            return;
+        }
+
+        badge.addEventListener("click", (event) => {
+            event.stopPropagation();
+
+            if (active === wrapper) {
+                closeAll();
                 return;
             }
+
             closeAll();
-            this.classList.add('is-open');
-            activeWrapper = this;
+
+            wrapper.classList.add("is-open");
+            active = wrapper;
+        });
+
+        wrapper.addEventListener("click", (event) => {
+            event.stopPropagation();
         });
     });
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.aiuse-wrapper')) {
+    document.addEventListener("click", closeAll);
+    window.addEventListener("scroll", closeAll, { passive: true });
+    window.addEventListener("resize", closeAll);
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
             closeAll();
         }
     });
-
-    window.addEventListener('scroll', closeAll);
-    window.addEventListener('resize', closeAll);
 });

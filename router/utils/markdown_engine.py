@@ -40,7 +40,6 @@ def get_markdown_eng() -> Markdown:
             "tables",  # Markdown-таблицы
             "smarty",  # Типографические ковычки
             "nl2br",  # Превращает одиночные \n в <br />
-            "tables",  # Markdown-таблицы
             "footnotes",  # Кривые сноски
             # ---
             TocTreeExtension(),  # Автоматическое оглавление по заголовкам
@@ -68,6 +67,40 @@ def get_markdown_eng() -> Markdown:
     )
 
 
+AI_TEXT_DESP: dict[str, str | None] = {
+    "none": None,
+    "fix": "ИИ использовался только для исправления орфографии, грамматики и небольших текстовых правок.",
+    "edit": "ИИ использовался для заметной редакции, перефразирования или структурирования текста.",
+    "gen": "ИИ использовался для генерации значительной части текста.",
+}
+
+
+AI_ART_DESP: dict[str, str | None] = {
+    "none": None,
+    "ass": "ИИ использовался при обработке или доработке изображений.",
+    "gen": "На странице используются изображения, созданные с использованием генеративного ИИ.",
+    "mixed": "На странице используются как сгенерированные, так и обработанные  использованием ИИ изображения.",
+}
+
+
+def get_ai_description(
+    meta: dict[str, str],
+    key: str,
+    descriptions: dict[str, str | None],
+) -> str | None:
+    value = meta.get(key.lower())
+
+    if value is None:
+        return None
+
+    value = value.strip().lower()
+
+    return descriptions.get(
+        value,
+        f"Неизвестное значение '{value}' для {key}",
+    )
+
+
 def get_wiki_page(
     md_path: Path,
     content: str,
@@ -78,9 +111,11 @@ def get_wiki_page(
     list[str] | None,
     str | None,
     str | None,
+    str | None,
 ]:
     md = get_markdown_eng()
-    setattr(md, "current_file", md_path)
+    setattr(md, "current_file", md_path)  # noqa: B010
+
     rendered_html = md.convert(content)
 
     meta: dict[str, str] = getattr(md, "wiki_meta", {})
@@ -89,14 +124,12 @@ def get_wiki_page(
 
     date = meta.get("date")
 
-    author: list[str] | None = None
     author_raw = meta.get("author")
     author = [a.strip() for a in author_raw.split(",")] if author_raw else None
 
     background_url = meta.get("background")
 
-    ai_use = meta.get("aiuse", None)
-    if ai_use:
-        ai_use = ai_use.lower()
+    ai_text = get_ai_description(meta, "AIText", AI_TEXT_DESP)
+    ai_art = get_ai_description(meta, "AIArt", AI_ART_DESP)
 
-    return rendered_html, title, date, author, background_url, ai_use
+    return (rendered_html, title, date, author, background_url, ai_text, ai_art)

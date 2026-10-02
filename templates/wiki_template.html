@@ -59,10 +59,11 @@
                 {% endif %}
 
 
-                {% if aiuse %}
+                {% if ai_text or ai_art %}
                 <span class="sep">•</span>
-                <span class="aiuse-wrapper" data-level="{{ aiuse }}">
-                    <span class="aiuse-badge aiuse-{{ aiuse }}">
+
+                <span class="aiuse-wrapper">
+                    <span class="aiuse-badge" aria-label="Информация об использовании ИИ">
                         <svg width="32" height="32" viewBox="0 0 512 512" fill="currentColor"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -74,18 +75,20 @@
                         <div class="aiuse-popup-header">
                             <span class="aiuse-popup-title">Использование ИИ</span>
                         </div>
+
                         <div class="aiuse-popup-body">
-                            {% if aiuse == 'none' %}
-                            <p><strong>Отсутствует</strong> - ИИ не использовался при создании этой страницы.</p>
-                            {% elif aiuse == 'low' %}
-                            <p><strong>Незначительные правки</strong> - ИИ помогал с грамматикой, орфографией и
-                                небольшими стилистическими улучшениями.</p>
-                            {% elif aiuse == 'medium' %}
-                            <p><strong>Средние правки</strong> - ИИ использовался для существенной редакции текста,
-                                перефразирования и структурирования.</p>
-                            {% elif aiuse == 'high' %}
-                            <p><strong>Значительные правки</strong> - ИИ активно участвовал в генерации контента,
-                                создании больших частей текста.</p>
+                            {% if ai_text %}
+                            <div class="aiuse-entry">
+                                <strong>Текст</strong>
+                                <p>{{ ai_text }}</p>
+                            </div>
+                            {% endif %}
+
+                            {% if ai_art %}
+                            <div class="aiuse-entry">
+                                <strong>Изображения</strong>
+                                <p>{{ ai_art }}</p>
+                            </div>
                             {% endif %}
                         </div>
                     </div>

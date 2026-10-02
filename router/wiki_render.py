@@ -36,7 +36,7 @@ def wiki_page(request: Request, page: Path):
             media_type="text/html",
         )
 
-    rendered_html, title, date, author, background_url, ai_use = get_wiki_page(
+    rendered_html, title, date, author, background_url, ai_text, ai_art = get_wiki_page(
         md_path, content
     )
 
@@ -49,6 +49,7 @@ def wiki_page(request: Request, page: Path):
             "date": date,
             "author": author,
             "background_url": background_url,
-            "aiuse": ai_use,
+            "ai_text": ai_text,
+            "ai_art": ai_art,
         },
     )

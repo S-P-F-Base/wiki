@@ -3,6 +3,8 @@ Author: Cain
 Date: skull
 Background: images/wallpaper.jpeg
 
+!card
+
 # Основные разделы
 
 !grid[2]
@@ -38,3 +40,5 @@ Background: images/wallpaper.jpeg
 ]
 
 !grid_end
+
+!card_end
