@@ -1,7 +1,6 @@
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from markdown import Markdown
 from markdown.blockprocessors import BlockProcessor
@@ -75,7 +74,7 @@ class AutoButtonsBlockProcessor(BlockProcessor):
 
         sort_mode = (cmd_match.group("args") or "abc").strip().lower()
 
-        current_file: Optional[Path] = getattr(self.md, "current_file", None)
+        current_file: Path | None = getattr(self.md, "current_file", None)
         if not current_file:
             push_suffix_block(blocks, block_lines[cmd_idx + 1 :])
             return True
@@ -182,15 +181,15 @@ class AutoButtonsBlockProcessor(BlockProcessor):
 
         return meta
 
-    def _parse_date(self, raw: Optional[str], fallback_ts: float) -> datetime:
+    def _parse_date(self, raw: str | None, fallback_ts: float) -> datetime:
         if not raw:
-            return datetime.fromtimestamp(fallback_ts)
+            return datetime.fromtimestamp(fallback_ts, UTC)
 
         raw = raw.strip()
 
         for fmt in ("%Y-%m-%d", "%d.%m.%Y"):
             try:
-                return datetime.strptime(raw, fmt)
+                return datetime.strptime(raw, fmt).astimezone(UTC)
 
             except ValueError:
                 pass
@@ -202,9 +201,10 @@ class AutoButtonsBlockProcessor(BlockProcessor):
                     int(parts[2]),
                     RU_MONTHS[parts[1].lower()],
                     int(parts[0]),
+                    tzinfo=UTC,
                 )
 
-            except Exception:
+            except Exception:  # noqa: S110
                 pass
 
-        return datetime.fromtimestamp(fallback_ts)
+        return datetime.fromtimestamp(fallback_ts, UTC)

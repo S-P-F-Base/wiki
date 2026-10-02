@@ -113,16 +113,16 @@ class LinkPreviewTreeprocessor(Treeprocessor):
         fallback_title: str,
         is_autolink: bool,
     ) -> ResolvedPreview | None:
-        # Prefer term to avoid collisions when multiple terms share one href.
         term_preview = self.previews.by_term.get(norm_term(text_key))
         if term_preview is not None and term_preview.has_content:
             preview = term_preview
+
         elif is_autolink:
-            # Auto-linked anchors should not take generic href fallback:
-            # if term preview is removed, no card should be shown.
             return None
+
         else:
             preview = self._resolve_href_preview(href)
+
         if preview is None or not preview.has_content:
             return None
 
@@ -148,16 +148,20 @@ class LinkPreviewTreeprocessor(Treeprocessor):
         card_classes = ["wiki-link-preview-card"]
         if preview.image:
             card_classes.append("has-image")
+
         else:
             card_classes.append("no-image")
+
         card.set("class", " ".join(card_classes))
         card.set("aria-hidden", "true")
 
         style_parts: list[str] = []
         if preview.image_width is not None:
             style_parts.append(f"--wiki-preview-image-width: {preview.image_width}px")
+
         if preview.image_height is not None:
             style_parts.append(f"--wiki-preview-image-height: {preview.image_height}px")
+
         if style_parts:
             card.set("style", "; ".join(style_parts))
 
@@ -169,8 +173,10 @@ class LinkPreviewTreeprocessor(Treeprocessor):
             image.set("class", "wiki-link-preview-image")
             if preview.image.startswith(("http://", "https://")):
                 source = preview.image
+
             else:
                 source = static_url(preview.image)
+
             image.set("src", TRANSPARENT_PIXEL)
             image.set("data-src", source)
             image.set("data-loaded", "0")
@@ -179,6 +185,7 @@ class LinkPreviewTreeprocessor(Treeprocessor):
             image.set("decoding", "async")
             if preview.image_width is not None:
                 image.set("width", str(preview.image_width))
+
             if preview.image_height is not None:
                 image.set("height", str(preview.image_height))
 

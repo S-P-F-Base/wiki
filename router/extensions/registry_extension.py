@@ -45,7 +45,6 @@ class RegistryPreprocessor(Preprocessor):
                 )
 
                 if header_close_rel is None:
-                    # Malformed header. Keep original text and continue safely.
                     out.extend(lines[start_i:])
                     break
 
@@ -59,7 +58,6 @@ class RegistryPreprocessor(Preprocessor):
                 if not self_closing:
                     end_rel = find_end_index(lines[i:], self.END_RE)
                     if end_rel is None:
-                        # Header-only registry block (no body, no !registry_end).
                         out.append(self.render_registry(header_lines, []))
                         continue
 
@@ -67,12 +65,7 @@ class RegistryPreprocessor(Preprocessor):
                     body_lines = lines[i:end_idx]
                     i = end_idx + 1
 
-                out.append(
-                    self.render_registry(
-                        header_lines,
-                        body_lines,
-                    )
-                )
+                out.append(self.render_registry(header_lines, body_lines))
                 continue
 
             out.append(lines[i])

@@ -131,6 +131,7 @@ class GridBlockProcessor(BlockProcessor):
             if kind == "content":
                 if value.strip():
                     tail_blocks.append(value)
+                    
                 continue
 
             raw = value.strip()

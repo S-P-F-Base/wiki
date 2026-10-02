@@ -26,7 +26,7 @@ class RestrictedPreprocessor(Preprocessor):
             ([^\s]+)
         )
         """,
-        re.X,
+        re.VERBOSE,
     )
 
     def run(self, lines):

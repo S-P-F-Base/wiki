@@ -25,7 +25,9 @@ class FolderTreePreprocessor(Preprocessor):
                     line = lines[i].strip()
                     if line:
                         paths.append(line)
+
                     i += 1
+
                 i += 1
 
                 tree = {}
@@ -48,14 +50,16 @@ class FolderTreePreprocessor(Preprocessor):
                         out.append(f"{prefix}{connector}{display}")
                         ext = "    " if last else "│   "
                         out.extend(render(sub, prefix + ext))
+
                     return out
 
-                roots = set(p.strip("/").split("/")[0] for p in paths)
+                roots = {p.strip("/").split("/")[0] for p in paths}
                 if len(roots) == 1:
                     root = roots.pop()
                     lines_tree = [f"/{root}"]
                     for line in render(tree[root], ""):
                         lines_tree.append(" " + line)
+
                 else:
                     lines_tree = render(tree, "")
 
@@ -64,6 +68,7 @@ class FolderTreePreprocessor(Preprocessor):
                 new_lines.extend(lines_tree)
                 new_lines.append("</pre>")
                 new_lines.append("</div>")
+
             else:
                 new_lines.append(lines[i])
                 i += 1

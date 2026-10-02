@@ -52,7 +52,7 @@ class TemplateIncludePreprocessor(Preprocessor):
                 out.append(f"Error reading '{name}': {e}")
                 line_from_template.append(False)
 
-        setattr(
+        setattr(  # noqa: B010
             self.md,
             "wiki_heading_sequence",
             collect_heading_sequence(out, line_from_template),

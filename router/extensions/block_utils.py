@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from re import Match, Pattern
-from typing import Sequence
 
 
 def has_matching_line(block: str, pattern: Pattern[str]) -> bool:
