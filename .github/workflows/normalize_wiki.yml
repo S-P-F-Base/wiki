@@ -1,61 +1,29 @@
-name: Normalize PR
+name: Normalize wiki
 
 on:
   pull_request:
     types:
-      - opened
-      - reopened
-      - synchronize
-
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "Pull request number"
-        required: true
-        type: number
+      - closed
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
 
+concurrency:
+  group: normalize-wiki-master
+  cancel-in-progress: false
+
 jobs:
-  normalize:
+  normalize-wiki:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
-      - name: Resolve PR
-        id: pr
-        env:
-          GH_TOKEN: ${{ github.token }}
-          EVENT_NAME: ${{ github.event_name }}
-          EVENT_PR: ${{ github.event.pull_request.number }}
-          MANUAL_PR: ${{ inputs.pr_number }}
-        run: |
-          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            PR_NUMBER="$MANUAL_PR"
-          else
-            PR_NUMBER="$EVENT_PR"
-          fi
-
-          PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
-
-          HEAD_REF="$(jq -r '.head.ref' <<< "$PR_JSON")"
-          HEAD_SHA="$(jq -r '.head.sha' <<< "$PR_JSON")"
-          HEAD_REPO="$(jq -r '.head.repo.full_name' <<< "$PR_JSON")"
-
-          if [[ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]]; then
-            echo "::error::Cannot push normalization commit to fork PR"
-            exit 1
-          fi
-
-          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
-          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout PR branch
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr.outputs.head_sha }}
+          ref: master
+          token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Python
@@ -63,10 +31,10 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Get changed files
+      - name: Get merged PR files
         env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           gh api \
             --paginate \
@@ -74,38 +42,36 @@ jobs:
             --jq '.[].filename' \
             > changed_files.txt
 
-          echo "PR files:"
+          echo "Files from PR #${PR_NUMBER}:"
           cat changed_files.txt
 
-      - name: Normalize markdown
+      - name: Normalize wiki
         run: |
           python3 scripts/normalize_wiki.py
 
-      - name: Show changes
-        run: |
-          rm -f changed_files.txt
-          git status --short
-          git diff -- wiki
-
-      - name: Check for changes
+      - name: Check changes
         id: changes
         run: |
+          rm -f changed_files.txt
+
           git add -- wiki
 
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No normalization changes."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Normalization changes:"
+            git diff --cached --stat
           fi
 
-      - name: Commit changes
+      - name: Commit and push
         if: steps.changes.outputs.changed == 'true'
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git commit -m "normalize markdown for #${PR_NUMBER}"
-          git push origin "HEAD:${HEAD_REF}"
+          git commit -m "normalize wiki after #${PR_NUMBER}"
+          git push origin master
