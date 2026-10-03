@@ -1,68 +1,58 @@
-name: PR automation
+name: Normalize PR
 
 on:
   pull_request:
     types:
-      - closed
+      - opened
+      - reopened
+      - synchronize
 
   workflow_dispatch:
     inputs:
       pr_number:
-        description: "Pull request number to normalize"
+        description: "Pull request number"
         required: true
         type: number
 
 permissions:
   contents: write
-  pull-requests: write
+  pull-requests: read
 
 jobs:
-  normalize-wiki:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event_name == 'pull_request' &&
-        github.event.action != 'closed' &&
-        !startsWith(github.event.pull_request.head.ref, 'ci/news-')
-      )
-
+  normalize:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Resolve pull request
+      - name: Resolve PR
         id: pr
         env:
           GH_TOKEN: ${{ github.token }}
           EVENT_NAME: ${{ github.event_name }}
-          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
-          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+          MANUAL_PR: ${{ inputs.pr_number }}
         run: |
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            PR_NUMBER="$INPUT_PR_NUMBER"
+            PR_NUMBER="$MANUAL_PR"
           else
-            PR_NUMBER="$EVENT_PR_NUMBER"
+            PR_NUMBER="$EVENT_PR"
           fi
 
           PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
 
-          HEAD_REPO="$(jq -r '.head.repo.full_name' <<< "$PR_JSON")"
           HEAD_REF="$(jq -r '.head.ref' <<< "$PR_JSON")"
           HEAD_SHA="$(jq -r '.head.sha' <<< "$PR_JSON")"
-          BASE_SHA="$(jq -r '.base.sha' <<< "$PR_JSON")"
+          HEAD_REPO="$(jq -r '.head.repo.full_name' <<< "$PR_JSON")"
 
           if [[ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]]; then
-            echo "::error::Cannot push normalization commit to a PR from a fork."
+            echo "::error::Cannot push normalization commit to fork PR"
             exit 1
           fi
 
-          {
-            echo "number=$PR_NUMBER"
-            echo "head_ref=$HEAD_REF"
-            echo "head_sha=$HEAD_SHA"
-            echo "base_sha=$BASE_SHA"
-          } >> "$GITHUB_OUTPUT"
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout PR
+      - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.pr.outputs.head_sha }}
@@ -73,24 +63,33 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Build changed files list
+      - name: Get changed files
         env:
-          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
         run: |
-          git diff --name-only "$BASE_SHA...HEAD" > changed_files.txt
+          gh api \
+            --paginate \
+            "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
+            --jq '.[].filename' \
+            > changed_files.txt
 
-          echo "Changed files:"
+          echo "PR files:"
           cat changed_files.txt
 
-      - name: Normalize wiki
+      - name: Normalize markdown
         run: |
           python3 scripts/normalize_wiki.py
+
+      - name: Show changes
+        run: |
+          rm -f changed_files.txt
+          git status --short
+          git diff -- wiki
 
       - name: Check for changes
         id: changes
         run: |
-          rm -f changed_files.txt
-
           git add -- wiki
 
           if git diff --cached --quiet; then
@@ -99,7 +98,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Commit normalization
+      - name: Commit changes
         if: steps.changes.outputs.changed == 'true'
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
@@ -108,77 +107,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git commit -m "normalize wiki for #${PR_NUMBER}"
-          git push origin "HEAD:refs/heads/${HEAD_REF}"
-
-  update-news:
-    if: >
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed' &&
-      github.event.pull_request.merged == true &&
-      !startsWith(github.event.pull_request.head.ref, 'ci/news-')
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: master
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: Save PR description
-        env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-        run: |
-          printf '%s' "$PR_BODY" > /tmp/pr_body.txt
-
-      - name: Update news
-        run: |
-          python3 scripts/news.py \
-            "${{ github.event.pull_request.user.login }}" \
-            /tmp/pr_body.txt
-
-      - name: Check for changes
-        id: changes
-        run: |
-          git add jsons/news.json jsons/news_content.json
-
-          if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Create news branch
-        if: steps.changes.outputs.changed == 'true'
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          BRANCH="ci/news-${PR_NUMBER}-${GITHUB_RUN_ID}"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git switch -c "$BRANCH"
-          git commit -m "update news for #${PR_NUMBER}"
-          git push origin "$BRANCH"
-
-          echo "NEWS_BRANCH=$BRANCH" >> "$GITHUB_ENV"
-
-      - name: Create pull request
-        if: steps.changes.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          gh pr create \
-            --base master \
-            --head "$NEWS_BRANCH" \
-            --title "Update news for #${PR_NUMBER}" \
-            --body "Generated changelog update for #${PR_NUMBER}: ${PR_TITLE}"
+          git commit -m "normalize markdown for #${PR_NUMBER}"
+          git push origin "HEAD:${HEAD_REF}"
