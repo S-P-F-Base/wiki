@@ -19,6 +19,7 @@ META_ORDER = [
     "Background",
     "ButtonImage",
     "ButtonDesc",
+    "AIUse",
 ]
 
 MONTHS = {

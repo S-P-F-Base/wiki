@@ -28,7 +28,7 @@ class DialogPreprocessor(Preprocessor):
         (?P<opts>.*)
         $
         """,
-        re.X,
+        re.VERBOSE,
     )
 
     OPTION_RE = re.compile(
@@ -41,7 +41,7 @@ class DialogPreprocessor(Preprocessor):
             ([^\s]+)
         )
         """,
-        re.X,
+        re.VERBOSE,
     )
 
     LINE_RE = re.compile(r"^\s*([^:]+):\s*(.+)$")

@@ -183,7 +183,4 @@ class AutoLinkTreeprocessor(Treeprocessor):
         if start > 0 and is_word_char(text[start - 1]):
             return False
 
-        if end < len(text) and is_word_char(text[end]):
-            return False
-
-        return True
+        return not (end < len(text) and is_word_char(text[end]))

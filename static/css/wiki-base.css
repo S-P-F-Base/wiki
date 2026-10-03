@@ -85,6 +85,7 @@ body {
 
 .meta .sep {
     opacity: 0.4;
+    margin: 0 0.1rem;
 }
 
 /* LAYOUT */
@@ -184,6 +185,7 @@ th {
     color: #ffb74d;
     border-bottom-color: #ffb74d;
 }
+
 
 /* TEX */
 .missing {

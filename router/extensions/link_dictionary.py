@@ -424,8 +424,10 @@ def parse_previews(path: Path) -> PreviewDictionary:
 def get_mtime(path: Path) -> float | None:
     if not path.exists():
         return None
+
     try:
         return path.stat().st_mtime
+
     except OSError:
         return None
 

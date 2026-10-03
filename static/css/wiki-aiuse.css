@@ -1,0 +1,157 @@
+/* AI USE ICON */
+
+.aiuse-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.aiuse-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1;
+    cursor: help;
+    color: #b0b0b0;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.aiuse-badge svg {
+    display: block;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.aiuse-wrapper:hover .aiuse-badge,
+.aiuse-wrapper.is-open .aiuse-badge {
+    color: #fff;
+}
+
+
+/* POPUP */
+
+.aiuse-popup {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+
+    min-width: 240px;
+    max-width: 340px;
+    padding: 0.75rem 0.9rem;
+
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+
+    color: #ddd;
+    font-size: 0.8rem;
+    font-weight: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-align: left;
+    text-transform: none;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateX(-50%) scale(0.94);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+
+    z-index: 1000;
+}
+
+.aiuse-popup::after {
+    content: "";
+
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    border: 6px solid transparent;
+    border-bottom-color: #1a1a1a;
+}
+
+.aiuse-wrapper:hover .aiuse-popup,
+.aiuse-wrapper.is-open .aiuse-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translateX(-50%) scale(1);
+}
+
+
+/* CONTENT */
+
+.aiuse-popup-header {
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.4rem;
+
+    border-bottom: 1px solid #2a2a2a;
+
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.aiuse-popup-title {
+    font-size: 0.85rem;
+}
+
+.aiuse-entry+.aiuse-entry {
+    margin-top: 0.65rem;
+    padding-top: 0.65rem;
+
+    border-top: 1px solid #252525;
+}
+
+.aiuse-entry strong {
+    display: block;
+
+    margin-bottom: 0.15rem;
+
+    color: #fff;
+    font-size: 0.78rem;
+}
+
+.aiuse-entry p {
+    margin: 0;
+
+    color: #ccc;
+    overflow-wrap: break-word;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+    .aiuse-popup {
+        min-width: unset;
+        width: max-content;
+        max-width: min(85vw, 340px);
+
+        padding: 0.65rem 0.8rem;
+
+        font-size: 0.75rem;
+    }
+
+    .aiuse-popup-header {
+        text-align: center;
+        font-size: 0.8rem;
+    }
+}

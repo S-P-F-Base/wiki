@@ -36,7 +36,9 @@ def wiki_page(request: Request, page: Path):
             media_type="text/html",
         )
 
-    rendered_html, title, date, author, background_url = get_wiki_page(md_path, content)
+    rendered_html, title, date, author, background_url, ai_text, ai_art = get_wiki_page(
+        md_path, content
+    )
 
     return templates.TemplateResponse(
         request,
@@ -47,5 +49,7 @@ def wiki_page(request: Request, page: Path):
             "date": date,
             "author": author,
             "background_url": background_url,
+            "ai_text": ai_text,
+            "ai_art": ai_art,
         },
     )

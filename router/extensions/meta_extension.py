@@ -44,5 +44,5 @@ class WikiMetaPreprocessor(Preprocessor):
             new_lines.append(line)
 
         md = cast(Markdown, self.md)
-        setattr(md, "wiki_meta", meta)
+        setattr(md, "wiki_meta", meta)  # noqa: B010
         return new_lines
