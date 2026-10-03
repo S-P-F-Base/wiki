@@ -1,6 +1,6 @@
 Title: Отряды быстрого реагирования
 Author: Cain
-Date: :skull:
+Date: 3 Октября 2026 г.
 
 ---
 

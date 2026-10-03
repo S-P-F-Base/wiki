@@ -1,6 +1,6 @@
 Title: Техника кукл
 Author: Cain
-Date: 13 Марта 2026 г.
+Date: 3 Октября 2026 г.
 
 !template[wip]
 

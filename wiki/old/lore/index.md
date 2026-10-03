@@ -1,6 +1,6 @@
 Title: Лор
 Author: Grom, Cain
-Date: 13 Марта 2026 г.
+Date: 3 Октября 2026 г.
 Background: images/lore/background_lore.jpg
 
 !card[#FF0000]

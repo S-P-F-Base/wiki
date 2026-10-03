@@ -1,9 +1,9 @@
 Title: Sierra Biotech
 Author: Cain
-Date: skull
+Date: 3 Октября 2026 г.
 Background: images/wallpaper.jpeg
-ButtonDesc: Биотехнологическая исследовательская организация
 ButtonImage: images/organisations/SierraBiotech/logo_small.png
+ButtonDesc: Биотехнологическая исследовательская организация
 
 [TOC]
 

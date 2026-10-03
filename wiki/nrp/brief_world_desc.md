@@ -1,6 +1,6 @@
 Title: Вкратце о мире
 Author: Cain
-Date: skull
+Date: 3 Октября 2026 г.
 Background: images/wallpaper.jpeg
 ButtonDesc: Всё, что нужно знать о мире проекта, чтобы начать играть.
 

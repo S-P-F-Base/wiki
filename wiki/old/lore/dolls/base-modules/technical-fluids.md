@@ -1,6 +1,6 @@
 Title: Технические жидкости
 Author: Grom
-Date: 12 Апреля 2026 г.
+Date: 3 Октября 2026 г.
 ButtonImage: images/lore/nrp_wiki/dolls/blood.png
 
 [TOC]
