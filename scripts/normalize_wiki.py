@@ -6,7 +6,6 @@ import subprocess
 from datetime import datetime
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import List, Tuple
 from zoneinfo import ZoneInfo
 
 META_LINE = re.compile(r"^[A-Za-z][A-Za-z \-]*:\s?.*$")
@@ -44,7 +43,7 @@ def today_ru(tz: str = "Europe/Amsterdam") -> str:
 
 
 # region meta helpers
-def find_meta_block(lines: List[str]) -> int:
+def find_meta_block(lines: list[str]) -> int:
     i = 0
     while i < len(lines):
         line = lines[i]
@@ -60,8 +59,8 @@ def find_meta_block(lines: List[str]) -> int:
     return i
 
 
-def parse_meta(meta_lines: List[str]) -> List[Tuple[str, str]]:
-    items: List[Tuple[str, str]] = []
+def parse_meta(meta_lines: list[str]) -> list[tuple[str, str]]:
+    items: list[tuple[str, str]] = []
     for ln in meta_lines:
         s = ln.strip()
         if not s or not META_LINE.match(ln):
@@ -94,8 +93,8 @@ def replace_symbols_simple(s: str) -> str:
     )
 
 
-def normalize_meta_values(items: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
-    out: List[Tuple[str, str]] = []
+def normalize_meta_values(items: list[tuple[str, str]]) -> list[tuple[str, str]]:
+    out: list[tuple[str, str]] = []
     for k, v in items:
         if k.strip().lower() != "background":
             v = replace_symbols_simple(v)
@@ -105,12 +104,12 @@ def normalize_meta_values(items: List[Tuple[str, str]]) -> List[Tuple[str, str]]
     return out
 
 
-def rebuild_meta(items: List[Tuple[str, str]]) -> str:
-    last_map: dict[str, Tuple[str, str]] = {}
+def rebuild_meta(items: list[tuple[str, str]]) -> str:
+    last_map: dict[str, tuple[str, str]] = {}
     for k, v in items:
         last_map[k.lower()] = (k, v)
 
-    out: List[Tuple[str, str]] = []
+    out: list[tuple[str, str]] = []
     for wanted in META_ORDER:
         pair = last_map.pop(wanted.lower(), None)
         if pair:
@@ -126,12 +125,12 @@ def rebuild_meta(items: List[Tuple[str, str]]) -> str:
 
 
 def update_date_in_items(
-    items: List[Tuple[str, str]], new_date: str
-) -> List[Tuple[str, str]]:
+    items: list[tuple[str, str]], new_date: str
+) -> list[tuple[str, str]]:
     if not any(k.strip().lower() == "date" for k, _ in items):
         return items
 
-    updated: List[Tuple[str, str]] = []
+    updated: list[tuple[str, str]] = []
     for k, v in items:
         if k.strip().lower() == "date":
             updated.append((normalize_keys_capitalization(k), new_date))
@@ -224,7 +223,7 @@ def _matches_wiki_md(path: str) -> bool:
     return fnmatch(path, "wiki/**/*.md") or fnmatch(path, "wiki/*.md")
 
 
-def from_changed_files_txt() -> List[Path]:
+def from_changed_files_txt() -> list[Path]:
     f = Path("changed_files.txt")
     if not f.exists():
         return []
@@ -234,7 +233,7 @@ def from_changed_files_txt() -> List[Path]:
     return [p for p in items if _matches_wiki_md(str(p))]
 
 
-def from_github_payload() -> List[Path]:
+def from_github_payload() -> list[Path]:
     event_path = os.environ.get("GITHUB_EVENT_PATH")
     if not event_path or not Path(event_path).is_file():
         return []
@@ -255,12 +254,12 @@ def from_github_payload() -> List[Path]:
     return [Path(p) for p in sorted(paths)]
 
 
-def from_git_diff_fallback() -> List[Path]:
+def from_git_diff_fallback() -> list[Path]:
     before = os.environ.get("GITHUB_EVENT_BEFORE", "")
     after = os.environ.get("GITHUB_SHA", "HEAD")
 
-    candidates: List[str] = []
-    cmds: List[List[str]] = []
+    candidates: list[str] = []
+    cmds: list[list[str]] = []
     if before:
         cmds.append(
             [
@@ -294,13 +293,13 @@ def from_git_diff_fallback() -> List[Path]:
             if candidates:
                 break
 
-        except Exception:
+        except Exception:  # noqa: S112
             continue
 
     return [Path(p) for p in candidates if _matches_wiki_md(p)]
 
 
-def discover_changed_files() -> List[Path]:
+def discover_changed_files() -> list[Path]:
     explicit = from_changed_files_txt()
     if explicit:
         return explicit
@@ -363,7 +362,7 @@ def main():
         try:
             orig = p.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: S112
             continue
 
         updated = process_markdown(orig, new_date)
