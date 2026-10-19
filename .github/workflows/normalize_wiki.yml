@@ -1,9 +1,12 @@
 name: Normalize wiki
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - master
+    paths:
+      - "wiki/**/*.md"
+      - "wiki/*.md"
 
   workflow_dispatch:
     inputs:
@@ -23,26 +26,19 @@ concurrency:
 jobs:
   normalize:
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      github.event.pull_request.merged == true
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[skip normalize]')
 
     runs-on: ubuntu-latest
 
     steps:
       - name: Resolve PR number
+        if: github.event_name == 'workflow_dispatch'
         id: pr
         env:
-          EVENT_NAME: ${{ github.event_name }}
-          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
-          MANUAL_PR_NUMBER: ${{ inputs.pr_number }}
+          PR_NUMBER: ${{ inputs.pr_number }}
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            PR_NUMBER="$MANUAL_PR_NUMBER"
-          else
-            PR_NUMBER="$EVENT_PR_NUMBER"
-          fi
-
           PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}")"
 
           MERGED_AT="$(jq -r '.merged_at' <<< "$PR_JSON")"
@@ -67,6 +63,7 @@ jobs:
           python-version: "3.13"
 
       - name: Get files changed by PR
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
@@ -81,6 +78,8 @@ jobs:
           cat changed_files.txt
 
       - name: Normalize wiki
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
         run: |
           python3 scripts/normalize_wiki.py
 
@@ -109,5 +108,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git commit -m "normalize wiki after #${PR_NUMBER}"
+          if [[ -n "$PR_NUMBER" ]]; then
+            NORMALIZE_SOURCE="#${PR_NUMBER}"
+          else
+            NORMALIZE_SOURCE="${GITHUB_SHA:0:7}"
+          fi
+
+          git commit -m "normalize wiki after ${NORMALIZE_SOURCE} [skip normalize]"
           git push origin master
