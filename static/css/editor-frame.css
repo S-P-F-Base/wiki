@@ -3,6 +3,20 @@
     outline-offset: 4px;
 }
 
+.editor-color-sampling,
+.editor-color-sampling * {
+    cursor: crosshair !important;
+}
+
+.editor-color-sampling .content [data-editor-id]:hover {
+    outline: 1px solid #ffb74d;
+}
+
+.editor-color-selection {
+    outline: 1px dashed #aaa;
+    background: #8882;
+}
+
 .content [contenteditable="true"] {
     outline: 2px solid #ffb74d;
     outline-offset: 5px;

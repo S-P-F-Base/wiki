@@ -163,12 +163,24 @@ function selectImage(path) {
     for (const button of document.querySelectorAll(".media-item")) button.setAttribute("aria-pressed", String(
         button.dataset.path === path));
 }
-async function browseMedia(folder) {
+async function browseMedia(folder, recover = false) {
     const sequence = ++mediaSequence;
     document.getElementById("media-status").textContent = "Открываю папку…";
     document.getElementById("media-grid").replaceChildren();
     try {
-        const result = await api("/editor/api/media?folder=" + encodeURIComponent(folder));
+        let result;
+        let recovered = false;
+        while (true) {
+            try {
+                result = await api('/editor/api/media?folder=' + encodeURIComponent(folder));
+                break;
+            } catch (error) {
+                if (sequence !== mediaSequence) return;
+                if (!recover || !folder || ![400, 404].includes(error.status)) throw error;
+                folder = folder.split('/').slice(0, -1).join('/');
+                recovered = true;
+            }
+        }
         if (sequence !== mediaSequence) return;
         mediaFolder = folder;
         mediaData = result;
@@ -187,11 +199,17 @@ async function browseMedia(folder) {
             });
             breadcrumbs.appendChild(button);
         }
-        document.getElementById("media-status").textContent = result.folders.length + " папок · " + result
+        document.getElementById("media-status").textContent = (recovered ? 'Исходная папка не найдена. Открыта ближайшая доступная. ' : '') + result.folders.length + " папок · " + result
             .images.length + " изображений. Превью загружаются по мере прокрутки.";
         refreshMedia();
     } catch (error) {
+        if (sequence !== mediaSequence) return;
         document.getElementById("media-status").textContent = error.message;
+        const home = document.createElement('button');
+        home.type = 'button';
+        home.textContent = 'Все изображения';
+        home.addEventListener('click', function () { browseMedia(''); });
+        document.getElementById('media-grid').replaceChildren(home);
     }
 }
 
@@ -214,7 +232,7 @@ function openMedia(target) {
     mediaDialog.showModal();
     const folder = selectedImage.startsWith("images/") ? selectedImage.slice(7, selectedImage.lastIndexOf(
         "/")) : mediaFolder;
-    browseMedia(folder);
+    browseMedia(folder, true);
 }
 document.getElementById("media-filter").addEventListener("input", refreshMedia);
 document.getElementById("media-upload").addEventListener("change", async function (event) {

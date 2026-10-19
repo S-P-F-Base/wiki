@@ -99,6 +99,7 @@ document.addEventListener("keydown", function (event) {
 let editorKinds = {};
 let editing = null;
 let editingInitial = "";
+let textColorSession = null;
 let latestSequence = 0;
 
 function tellParent(data) {
@@ -223,6 +224,7 @@ function textChanged() {
             level,
             caption: editing.dataset.caption,
             plainText: editing.dataset.caption ? editing.innerText : undefined,
+            deferPreview: Boolean(textColorSession),
             markdown
         });
     }
@@ -378,6 +380,7 @@ document.addEventListener("focusout", function (event) {
     if (event.target !== editing) return;
     rememberSelectionOffsets();
     textChanged();
+    if (textColorSession?.id === editing.dataset.editorId) return;
     editing.removeAttribute("contenteditable");
     editing = null;
     tellParent({
@@ -527,7 +530,7 @@ let rememberedTextId = "";
 let rememberedOffsets = null;
 document.addEventListener("selectionchange", function () {
     const selection = window.getSelection();
-    if (!editing || !document.hasFocus() || !selection.rangeCount ||
+    if (!editing || textColorSession || !document.hasFocus() || !selection.rangeCount ||
         !editing.contains(selection.anchorNode) || !editing.contains(selection.focusNode)) return;
     rememberedRange = selection.getRangeAt(0).cloneRange();
     rememberedTextId = editing.dataset.editorId;
@@ -627,8 +630,6 @@ window.addEventListener("message", function (event) {
         if (data.format === 'colorReset') resetTextColor();
         if (["bold", "italic", "strikeThrough"].includes(data.format)) document.execCommand(data
             .format);
-        if (data.format === 'color' && /^#[0-9a-f]{6}$/i.test(data.value)) document.execCommand(
-            'foreColor', false, data.value);
         if (data.format === "small") {
             const selection = window.getSelection();
             const range = selection.getRangeAt(0);

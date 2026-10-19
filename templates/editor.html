@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Вики · Редактор</title>
     <link rel="stylesheet" href="{{ 'css/editor.css' | ver }}">
+    <link rel="stylesheet" href="{{ 'css/editor-colors.css' | ver }}">
     <link rel="stylesheet" href="{{ 'css/extensions/strikethrough.css' | ver }}">
     <script src="{{ 'js/editor-preview.js' | ver }}" defer></script>
     <script src="{{ 'js/editor.js' | ver }}" defer></script>
@@ -13,6 +14,7 @@
     <script src="{{ 'js/editor-pages.js' | ver }}" defer></script>
     <script src="{{ 'js/editor-media.js' | ver }}" defer></script>
     <script src="{{ 'js/editor-blocks.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor-colors.js' | ver }}" defer></script>
     <script src="{{ 'js/editor-settings.js' | ver }}" defer></script>
 </head>
 
@@ -50,8 +52,8 @@
                 <button type="button" data-format="small" disabled title="Мелкий текст">Мелкий</button>
                 <button type="button" id="redact-text" disabled>Засекретить</button>
                 <button type="button" id="constant-text" disabled>Константа</button>
-                <label class="text-color-tool" title="Цвет текста">Цвет<input id="text-color" type="color"
-                        value="#ffb74d" disabled></label>
+                <button id="text-color" type="button" disabled aria-expanded="false"
+                    aria-controls="text-color-panel"><span class="color-swatch"></span>Цвет</button>
                 <button id="text-color-reset" type="button" disabled>Сбросить цвет</button>
             </div>
             <button id="toc-toggle" type="button" disabled aria-pressed="false">Оглавление</button>
@@ -64,6 +66,15 @@
         <iframe id="page-view" title="Страница вики"
             sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>
     </main>
+    <section id="text-color-panel" class="color-popover" role="dialog" aria-label="Цвет текста" hidden>
+        <header><strong>Цвет выделенного текста</strong><button type="button" data-color-close aria-label="Закрыть">×</button></header>
+        <div id="text-color-picker"></div>
+        <footer><button type="button" data-color-close>Готово</button></footer>
+    </section>
+    <div id="color-sampling-status" class="color-sampling-status" role="status" hidden>
+        Выбери цвет текста, фона или картинки на странице. Esc: отмена.
+        <button id="cancel-color-sampling" type="button">Отмена</button>
+    </div>
     <dialog id="metadata-panel" class="metadata-dialog" aria-labelledby="metadata-title">
         <header class="panel-header">
             <div>
@@ -109,9 +120,9 @@
     <dialog id="card-dialog">
         <form id="card-form">
             <h2>Цвет карточки</h2>
-            <label>Выбрать цвет<input id="card-picker" type="color" value="#ff9800"></label>
-            <label>Или вписать цвет<input id="card-color" placeholder="#ff9800, orange, rgb(255, 152, 0)"></label>
-            <button id="card-color-reset" type="button">Цвет по умолчанию</button>
+            <div id="card-picker"></div>
+            <input id="card-color" type="hidden">
+            <button id="card-color-reset" type="button" hidden>Цвет по умолчанию</button>
             <footer class="dialog-actions"><button type="button" data-close-dialog>Закрыть</button><button
                     type="submit">Применить</button></footer>
         </form>

@@ -625,17 +625,6 @@ document.getElementById('inline-form').addEventListener('submit', function (even
         index: inlineTarget.index
     });
 });
-document.getElementById('text-color').addEventListener('input', function (event) {
-    sendToFrame({
-        type: 'wiki-format',
-        format: 'color',
-        value: event.target.value,
-        id: selectedTextId
-    });
-});
-document.getElementById('text-color').addEventListener('pointerdown', function () {
-    lastEdit = '';
-});
 
 function openBlockPalette(id = '', placement = 'after') {
     if (!current || busy || loading) return;
@@ -1095,6 +1084,7 @@ document.getElementById('text-color-reset').addEventListener('click', function (
 });
 document.getElementById('card-color-reset').addEventListener('click', function () {
     document.getElementById('card-color').value = '';
+    cardColorPicker.setColor('#ff9800');
     previewCardColor();
 });
 

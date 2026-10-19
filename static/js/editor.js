@@ -66,7 +66,9 @@ async function api(url, data) {
         } catch {
             /* Keep the HTTP status when no JSON is available. */
         }
-        throw new Error(message);
+        const error = new Error(message);
+        error.status = response.status;
+        throw error;
     }
     return response.json();
 }
@@ -210,6 +212,7 @@ async function openPage(path, replace = false, hash = "", discard = false) {
         updateAddress(true);
         return;
     }
+    if (typeof closeTextColor === 'function') closeTextColor();
     const sequence = ++loadSequence;
     ++previewSequence;
     if (previewRequest) previewRequest.abort();
@@ -377,6 +380,7 @@ window.addEventListener("message", function (event) {
     if (event.source !== frame.contentWindow || !event.data || !current) return;
     const data = event.data;
     if (data.type === 'wiki-blurred') {
+        if (typeof textColorPanel !== 'undefined' && !textColorPanel.hidden) return;
         updatePreview();
         return;
     }
@@ -452,6 +456,7 @@ window.addEventListener("message", function (event) {
             "[data-format], #redact-text, #constant-text, #text-color, #text-color-reset")) button
                 .disabled = !
                 selectedTextId;
+        document.getElementById('text-color').disabled = !selectedTextId || !selectedText;
         return;
     }
     if (data.type === 'wiki-grid-action') {
@@ -491,7 +496,7 @@ window.addEventListener("message", function (event) {
                 owner.props.text = data.plainText;
                 owner.props.markdown = data.markdown;
                 owner.changed = true;
-                changed();
+                changed(!data.deferPreview);
                 return;
             }
             if (!owner || !['list', 'table'].includes(owner.kind) || typeof data.markdown !==
@@ -507,7 +512,7 @@ window.addEventListener("message", function (event) {
                 item.text = data.markdown;
             }
             owner.changed = true;
-            changed();
+            changed(!data.deferPreview);
             return;
         }
         const found = findBlock(data.id);
@@ -519,7 +524,7 @@ window.addEventListener("message", function (event) {
             found.node.kind = data.kind;
             if (data.level) found.node.level = data.level;
         }
-        changed();
+        changed(!data.deferPreview);
         return;
     }
     if (data.type === "wiki-navigate" && typeof data.href === "string") {
@@ -778,13 +783,9 @@ function openCard(id) {
     cardTarget = id;
     const color = id ? findBlock(id).node.color : "#ff9800";
     document.getElementById("card-color").value = color;
-    document.getElementById("card-picker").value = /^#[0-9a-f]{6}$/i.test(color) ? color : "#ff9800";
+    cardColorPicker.setColor(color || '#ff9800');
     cardDialog.showModal();
 }
-document.getElementById("card-picker").addEventListener("input", function (event) {
-    document.getElementById("card-color").value = event.target.value;
-    previewCardColor();
-});
 
 function previewCardColor() {
     const color = document.getElementById("card-color").value.trim();
@@ -804,6 +805,7 @@ function previewCardColor() {
 }
 document.getElementById("card-color").addEventListener("input", previewCardColor);
 cardDialog.addEventListener('close', function () {
+    if (cardDialog.dataset.colorSampling) return;
     updatePreview();
 });
 document.getElementById("card-color").addEventListener("input", function (event) {

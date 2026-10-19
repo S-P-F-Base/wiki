@@ -345,12 +345,6 @@ dialog label {
     margin-bottom: 1rem;
 }
 
-#card-picker {
-    width: 100%;
-    height: 70px;
-    padding: .3rem;
-}
-
 .dialog-actions {
     display: flex;
     align-items: center;
@@ -370,6 +364,27 @@ dialog label {
 
 .media-dialog .panel-header h2 {
     margin: 0;
+}
+
+.media-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    height: min(900px, 94dvh);
+    max-height: 94dvh;
+}
+
+.media-dialog> :not(.media-grid) {
+    flex-shrink: 0;
+}
+
+.media-dialog .media-grid {
+    flex: 1 0 155px;
+    height: auto;
+    min-height: 155px;
+}
+
+.image-options[hidden] {
+    display: none;
 }
 
 .media-tools {
@@ -734,20 +749,6 @@ textarea {
 .grid-cell-row .cell-gap {
     width: 100%;
     padding: .3rem;
-}
-
-.text-color-tool {
-    display: inline-flex;
-    align-items: center;
-    gap: .3rem;
-    color: #aaa;
-    font-size: 11px;
-}
-
-#text-color {
-    width: 30px;
-    height: 28px;
-    padding: .1rem;
 }
 
 /* Keep large forms fixed while their contents scroll. */
