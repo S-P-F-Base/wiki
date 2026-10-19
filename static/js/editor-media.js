@@ -230,6 +230,8 @@ function openMedia(target) {
     document.querySelector(".image-options").hidden = Boolean(target.field || target.settings);
     selectImage(selectedImage);
     mediaDialog.showModal();
+    mediaDialog.scrollTop = 0;
+    document.getElementById('media-filter').focus({preventScroll: true});
     const folder = selectedImage.startsWith("images/") ? selectedImage.slice(7, selectedImage.lastIndexOf(
         "/")) : mediaFolder;
     browseMedia(folder, true);

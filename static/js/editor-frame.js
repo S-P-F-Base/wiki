@@ -566,7 +566,7 @@ function rangeAtTextOffsets(target, offsets) {
     while (nodes.nextNode()) {
         const node = nodes.currentNode;
         const end = position + node.textContent.length;
-        if (!started && offsets.start <= end) {
+        if (!started && offsets.start < end) {
             range.setStart(node, Math.max(0, offsets.start - position));
             started = true;
         }

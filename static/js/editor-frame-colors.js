@@ -17,8 +17,9 @@ function startTextColor(id) {
         start: offsets.start,
         end: offsets.end
     };
-    if (prefix && editorKinds[id] === 'heading') selection.start = Math.max(prefix[0].length, selection
-    .start);
+    if (prefix && editorKinds[id] === 'heading') {
+        selection.start = Math.max(prefix[0].length, selection.start);
+    }
     textColorSession = {
         id,
         offsets: selection
@@ -58,7 +59,8 @@ function applyTextColor(value) {
     wrapper.style.color = value;
     wrapper.appendChild(fragment);
     for (const part of [prefix, suffix])
-        for (const previous of part.querySelectorAll('.editor-color-selection')) previous.classList.remove('editor-color-selection');
+        for (const previous of part.querySelectorAll('.editor-color-selection')) previous.classList.remove(
+            'editor-color-selection');
     for (const part of [prefix, suffix])
         for (const empty of part.querySelectorAll('span[style],font[color]'))
             if (!empty.textContent && !empty.querySelector('br')) empty.remove();
@@ -85,7 +87,9 @@ function endTextColor(data) {
             editing = null;
         }
     }
-    tellParent({type: 'wiki-color-finished'});
+    tellParent({
+        type: 'wiki-color-finished'
+    });
 }
 
 window.addEventListener('message', function (event) {
@@ -166,7 +170,9 @@ function samplePageColor(event) {
             range.setEnd(node, index + 1);
             const rect = range.getBoundingClientRect();
             if (event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top &&
-                event.clientY <= rect.bottom) return {color: getComputedStyle(node.parentElement).color};
+                event.clientY <= rect.bottom) return {
+                color: getComputedStyle(node.parentElement).color
+            };
         }
     }
     const bounds = element.getBoundingClientRect(),

@@ -15,7 +15,9 @@ function rgbHex(red, green, blue) {
 function normalizeColor(value) {
     value = value?.trim().toLowerCase();
     if (/^#[\da-f]{6}$/.test(value)) return value;
-    if (/^#[\da-f]{3}$/.test(value)) return '#' + Array.from(value.slice(1)).map(function (digit) { return digit + digit; }).join('');
+    if (/^#[\da-f]{3}$/.test(value)) return '#' + Array.from(value.slice(1)).map(function (digit) {
+        return digit + digit;
+    }).join('');
     if (!value || !CSS.supports('color', value)) return null;
     colorContext.clearRect(0, 0, 1, 1);
     colorContext.fillStyle = value;
@@ -285,6 +287,7 @@ window.addEventListener('message', function (event) {
     if (event.source !== frame.contentWindow) return;
     if (event.data?.type === 'wiki-color-state' && event.data.id === textColorTarget) {
         textColorPicker.setColor(event.data.color);
+        textColorButton.style.setProperty('--chosen-color', textColorPicker.hex);
         if (document.activeElement === textColorPicker.hexInput) textColorPicker.hexInput.select();
     }
     if (event.data?.type === 'wiki-dismiss' && !colorSampling) closeTextColor();
