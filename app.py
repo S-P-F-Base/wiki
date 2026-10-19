@@ -4,9 +4,9 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+from router.utils.search_index import build_index, is_index_stale
 from router.wiki_index import router as wiki_index_router
 from router.wiki_render import router as wiki_render_router
-from scripts.index_wiki import build_index, is_index_stale
 from template_env import LOCAL_RUN
 
 

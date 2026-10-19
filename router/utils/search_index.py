@@ -11,7 +11,6 @@ from config import Constants
 
 WIKI_DIR = Path("wiki")
 OUT_DIR = Path("static/search")
-OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 INDEX_FILE = OUT_DIR / "wiki_index.json"
 META_FILE = OUT_DIR / "wiki_index.meta.json"
@@ -527,6 +526,7 @@ def is_template_path(path: Path) -> bool:
 
 
 def build_index():
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
     pages: list[dict] = []
 
     for md in sorted(WIKI_DIR.rglob("*.md")):
@@ -575,7 +575,3 @@ def is_index_stale() -> bool:
             return True
 
     return False
-
-
-if __name__ == "__main__":
-    build_index()
