@@ -2,7 +2,7 @@ Title: Sierra Biotech
 Author: Cain
 Date: 3 Октября 2026 г.
 Background: images/wallpaper.jpeg
-ButtonImage: images/organisations/SierraBiotech/logo_small.png
+ButtonImage: images/organisations/SierraBiotech/logo_small.webp
 ButtonDesc: Биотехнологическая исследовательская организация
 
 [TOC]
@@ -12,7 +12,7 @@ ButtonDesc: Биотехнологическая исследовательск�
 # Основная информация
 
 !image[
-   images/organisations/SierraBiotech/logo.png
+   images/organisations/SierraBiotech/logo.webp
    align=left
    width=300
 ]

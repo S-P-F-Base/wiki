@@ -2,7 +2,7 @@ Title: Афрофрукт
 Author: Cain
 Date: 3 Октября 2026 г.
 Background: images/wallpaper.jpeg
-ButtonImage: images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.png
+ButtonImage: images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.webp
 ButtonDesc: Искусственно выведенная вьющаяся плодовая культура с сердцевидными плодами
 AIArt: gen
 AIText: gen
@@ -14,7 +14,7 @@ AIText: gen
 # Основная информация
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.png
+    images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.webp
     align=right
     width=300
     ai=gen
@@ -43,7 +43,7 @@ AIText: gen
 # Ботаническое описание
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/flower.png
+    images/organisations/SierraBiotech/projects/afrofruit/flower.webp
     align=left
     width=300
     ai=gen
@@ -70,21 +70,21 @@ AIText: gen
 !grid[3]
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/seed.png
+    images/organisations/SierraBiotech/projects/afrofruit/seed.webp
     ai=gen
 ]
 
 !grid_step
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/fruit_cut.png
+    images/organisations/SierraBiotech/projects/afrofruit/fruit_cut.webp
     ai=gen
 ]
 
 !grid_step
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.png
+    images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.webp
     ai=gen
 ]
 
@@ -125,21 +125,21 @@ AIText: gen
 !grid[3]
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/sprout.png
+    images/organisations/SierraBiotech/projects/afrofruit/sprout.webp
     ai=gen
 ]
 
 !grid_step
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/vine_mature.png
+    images/organisations/SierraBiotech/projects/afrofruit/vine_mature.webp
     ai=gen
 ]
 
 !grid_step
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/vine_mature_fruit.png
+    images/organisations/SierraBiotech/projects/afrofruit/vine_mature_fruit.webp
     ai=gen
 ]
 
@@ -156,7 +156,7 @@ AIText: gen
 !grid_step
 
 !image[
-    images/organisations/SierraBiotech/projects/afrofruit/vine_wilted.png
+    images/organisations/SierraBiotech/projects/afrofruit/vine_wilted.webp
     ai=gen
 ]
 

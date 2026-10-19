@@ -33,7 +33,7 @@ class ButtonBlockProcessor(DirectiveBlockProcessor):
         image = None
 
         if len(data) >= 3:
-            if data[2].lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".svg")):
+            if data[2].lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp")):
                 image = data[2]
 
             else:

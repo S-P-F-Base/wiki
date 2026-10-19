@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    {% if preview_base %}<base href="{{ preview_base }}">{% endif %}
     <title>{{ title }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,6 +31,7 @@
     <link rel="stylesheet" href="{{ 'css/extensions/image.css' | ver }}" />
     <link rel="stylesheet" href="{{ 'css/extensions/autolink-preview.css' | ver }}" />
     <link rel="stylesheet" href="{{ 'css/extensions/restricted.css' | ver }}" />
+    {% if preview_base %}<link rel="stylesheet" href="{{ 'css/editor-frame.css' | ver }}">{% endif %}
 </head>
 
 <body {% if background_url %} style="--wiki-bg-image: url('{{ background_url | ver }}');" {% endif %}>
@@ -119,9 +121,11 @@
 
     </div>
 
+    <script src="{{ 'js/render/images.js' | ver }}" data-fallback="{{ 'images/placeholder.svg' | ver }}"></script>
+    {% if preview_base %}<script src="{{ 'js/editor-frame.js' | ver }}"></script>{% endif %}
     <script src="{{ 'js/render/scroll.js' | ver }}"></script>
-    <script src="{{ 'js/render/search.js' | ver }}"></script>
-    <script src="{{ 'js/render/toc.js' | ver }}"></script>
+    {% if not preview_base %}<script src="{{ 'js/render/search.js' | ver }}"></script>{% endif %}
+    {% if not preview_base %}<script src="{{ 'js/render/toc.js' | ver }}"></script>{% endif %}
     <script src="{{ 'js/render/link-preview.js' | ver }}"></script>
     <script src="{{ 'js/render/aiuse.js' | ver }}"></script>
 </body>
