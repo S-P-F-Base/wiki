@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200">
+  <rect width="320" height="200" rx="12" fill="#202020"/>
+  <g fill="none" stroke="#888" stroke-width="3" stroke-linejoin="round">
+    <rect x="125" y="43" width="70" height="58" rx="5"/>
+    <circle cx="176" cy="60" r="6"/>
+    <path d="m126 91 22-23 19 20 11-10 16 17"/>
+  </g>
+  <text x="160" y="138" fill="#ccc" font-family="sans-serif" font-size="15" text-anchor="middle">Изображение не найдено</text>
+</svg>
