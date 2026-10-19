@@ -57,7 +57,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 - Упрощённый ИИ по сравнению с T-Dolls.
 
 !image[
-    images/lore/nrp_wiki/dolls/C-Dolls.jpg
+    images/lore/nrp_wiki/dolls/C-Dolls.webp
     align=center
 ]
 !card_end
@@ -100,7 +100,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 - Превосходят T-Dolls в скорости и силе.
 
 !image[
-    images/lore/nrp_wiki/dolls/Paradeus.png
+    images/lore/nrp_wiki/dolls/Paradeus.webp
     align=center
 ]
 !card_end
@@ -143,7 +143,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 **Энергоноситель** -- синяя/зелёная жидкость для питания ядра (аналог электролита).
 
 !image[
-    images/lore/nrp_wiki/dolls/blood.png
+    images/lore/nrp_wiki/dolls/blood.webp
     align=center
 ]
 
@@ -154,7 +154,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 !card_end
 
 !image[
-    images/lore/nrp_wiki/dolls/an-94_blooding.png
+    images/lore/nrp_wiki/dolls/an-94_blooding.webp
     align=center
 ]
 
@@ -172,7 +172,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 Пример: M4A1 в сюжете страдает от ПТСР после потери отряда, опасаясь потерь в будущем.
 
 !image[
-    images/lore/nrp_wiki/dolls/ptsd.png
+    images/lore/nrp_wiki/dolls/ptsd.webp
     align=center
 ]
 !card_end
@@ -227,7 +227,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 Не нуждаются во сне в привычном понимании, но требуют подзарядки и форматирования данных (пример: G11 спит из-за энергосберегающего режима).
 
 !image[
-    images/lore/nrp_wiki/dolls/G11.png
+    images/lore/nrp_wiki/dolls/G11.webp
     align=center
 ]
 !card_end
@@ -271,14 +271,14 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 !grid[2]
 
 !image[
-    images/lore/nrp_wiki/dolls/UMP45.png
+    images/lore/nrp_wiki/dolls/UMP45.webp
     align=center
 ]
 
 !grid_step
 
 !image[
-    images/lore/nrp_wiki/dolls/UMP45MK3.png
+    images/lore/nrp_wiki/dolls/UMP45MK3.webp
     align=center
 ]
 
@@ -332,7 +332,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 Протокол Zener - это протокол широкополосной связи, созданный 90wish и позднее модифицированный [16Lab](/wiki/lore/nrp_wiki/organisations/16Lab) для сетевого интерфейса управления куклами. Подобно одноранговой технологии, он позволяет группе кукол передавать сообщения друг другу, не полагаясь на главный компьютер или спутниковую связь, чтобы они могли передавать приказы человека и новую тактическую информацию. Это позволяет группе кукол в некоторой степени функционировать независимо от человека. Он назван в честь Карла Зенера, который придумал эксперимент с картами для изучения телепатии и экстрасенсорных способностей.
 
 !image[
-    images/lore/nrp_wiki/dolls/Zener_Illustration.png
+    images/lore/nrp_wiki/dolls/Zener_Illustration.webp
     align=center
 ]
 !card_end
@@ -345,7 +345,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 Протокол был оптимизирован за счёт разделения кукол на "основные" и "пустышки", при этом только у основных кукол был процессор и программное обеспечение для синхронизации, необходимое для выполнения команд. Пустышки дешевле, так как у них есть только программное обеспечение для печати, разведки и боя с минимальными аппаратными функциями. В результате общая стоимость отряда из пустышек ниже, чем стоимость отряда из стандартных кукол. Пустышки сделаны похожими на основных кукол, чтобы их можно было использовать в качестве отвлекающих манёвров. Манекены визуально отличаются от основного корпуса более грубыми деталями, что делает их похожими на роботов.
 
 !image[
-    images/lore/nrp_wiki/dolls/Dummy_Network.png
+    images/lore/nrp_wiki/dolls/Dummy_Network.webp
     align=center
 ]
 !card_end
@@ -356,7 +356,7 @@ Background: images/lore/nrp_wiki/dolls/background.jpg
 Более поздняя разработка [16Lab](/wiki/lore/nrp_wiki/organisations/16Lab), ядро управления огнём (FCC), содержит всё программное обеспечение, связанное с боем, в физически съёмном модуле, что позволяет легко лишить Т-куклу боевых возможностей. FCC имеет несколько интерфейсных портов, что делает его полностью совместимым с любой модификацией программного обеспечения Imprint. Кукла, оснащённая FCC, может использовать своё оружие быстрее и точнее, чем даже хорошо обученные солдаты-люди.
 
 !image[
-    images/lore/nrp_wiki/dolls/90WISH_logo.png
+    images/lore/nrp_wiki/dolls/90WISH_logo.webp
     align=center
 ]
 !card_end
