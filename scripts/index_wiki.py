@@ -4,7 +4,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from config import Constants
@@ -138,16 +138,12 @@ def collapse_spaces(text: str) -> str:
 # CONSTANT handling
 def substitute_constants(text: str) -> str:
     """
-    Try to substitute !constant[name] from Constants.
-    If not found — remove later.
+    Substitute !constant[name] from local constants, removing unknown values.
     """
 
     def repl(m: re.Match) -> str:
-        key = m.group(1)
-        if Constants is not None and hasattr(Constants, key):
-            val = getattr(Constants, key)
-            return str(val) if val is not None else ""
-        return ""
+        key = m.group(1).strip()
+        return Constants.get_all_const().get(key, "")
 
     return CONSTANT_RE.sub(repl, text)
 
@@ -540,7 +536,7 @@ def build_index():
     index = {
         "version": 2,
         "pages": pages,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
     }
 
     raw_json = json.dumps(index, ensure_ascii=False, sort_keys=True)
@@ -555,7 +551,7 @@ def build_index():
         json.dumps(
             {
                 "hash": f"sha256:{digest}",
-                "updated": datetime.now(timezone.utc).isoformat(),
+                "updated": datetime.now(UTC).isoformat(),
                 "pages": len(pages),
                 "version": index["version"],
             },
