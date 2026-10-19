@@ -3,15 +3,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from markdown import Markdown
-from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension
 
-from .block_utils import (
-    find_match_in_lines,
-    has_matching_line,
-    parse_prefix_blocks,
-    push_suffix_block,
-)
+from .blocks import Block, DirectiveBlockProcessor
 
 RU_MONTHS = {
     "января": 1,
@@ -50,34 +44,20 @@ class AutoButtonsExtension(Extension):
         )
 
 
-class AutoButtonsBlockProcessor(BlockProcessor):
-    RE = re.compile(r"^\s*!auto_buttons(?:\[(?P<args>[^\]]+)\])?\s*$")
+class AutoButtonsBlockProcessor(DirectiveBlockProcessor):
+    START_RE = re.compile(r"^\s*!auto_buttons(?:\[(?P<args>[^\]]+)\])?\s*$")
 
     def __init__(self, parser, wiki_dir: Path, md: Markdown):
         super().__init__(parser)
         self.wiki_dir = wiki_dir.resolve()
         self.md = md
 
-    def test(self, parent, block):
-        return has_matching_line(block, self.RE)
-
-    def run(self, parent, blocks):
-        block = blocks.pop(0)
-        block_lines = block.splitlines()
-
-        cmd_idx, cmd_match = find_match_in_lines(block_lines, self.RE)
-
-        if cmd_idx is None or cmd_match is None:
-            return True
-
-        parse_prefix_blocks(self.parser, parent, block_lines[:cmd_idx])
-
-        sort_mode = (cmd_match.group("args") or "abc").strip().lower()
+    def render(self, parent, block: Block):
+        sort_mode = (block.match.group("args") or "abc").strip().lower()
 
         current_file: Path | None = getattr(self.md, "current_file", None)
         if not current_file:
-            push_suffix_block(blocks, block_lines[cmd_idx + 1 :])
-            return True
+            return
 
         current_file = Path(current_file).resolve()
         folder = current_file.parent
@@ -108,10 +88,7 @@ class AutoButtonsBlockProcessor(BlockProcessor):
 
             md_blocks.append("\n".join(item_lines))
 
-        push_suffix_block(blocks, block_lines[cmd_idx + 1 :])
-
-        blocks[:0] = md_blocks
-        return True
+        return "\n\n".join(md_blocks)
 
     def _collect(self, folder: Path, current: Path):
         out = []

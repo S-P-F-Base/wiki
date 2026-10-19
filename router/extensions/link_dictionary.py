@@ -7,12 +7,12 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from xml.etree import ElementTree as etree
 
-from .block_utils import find_end_index, find_match_in_lines
+from .blocks import SHORT_HEADER_END_RE as HEADER_CLOSE_RE
+from .blocks import find_line, parse_attributes
 
 log = logging.getLogger(__name__)
 
 WHITESPACE_RE = re.compile(r"\s+")
-HEADER_CLOSE_RE = re.compile(r"^(?P<escaped>\\)?]\s*$")
 SIZE_RE = re.compile(r"^\s*(\d{1,4})(?:px)?\s*$", re.IGNORECASE)
 
 AUTOLINK_START_RE = re.compile(r"^\s*!autolink\[\s*$")
@@ -81,29 +81,6 @@ def norm_term(value: str) -> str:
 
 def is_word_char(char: str) -> bool:
     return char.isalnum() or char == "_"
-
-
-def unquote(value: str) -> str:
-    value = value.strip()
-    if len(value) < 2:
-        return value
-
-    quote_pairs = {
-        '"': '"',
-        "'": "'",
-        "«": "»",
-        "„": "“",
-        "“": "”",
-        "”": "“",
-    }
-    first, last = value[0], value[-1]
-    if first == last and first in {'"', "'", "«", "»", "„", "“", "”"}:
-        return value[1:-1].strip()
-
-    if first in quote_pairs and quote_pairs[first] == last:
-        return value[1:-1].strip()
-
-    return value
 
 
 def parse_px_size(value: str | None) -> int | None:
@@ -177,20 +154,12 @@ def parse_kv_header(
     start_idx: int,
     source: Path,
 ) -> tuple[dict[str, str], int, bool]:
-    attrs: dict[str, str] = {}
-    close_idx, _ = find_match_in_lines(lines[start_idx:], HEADER_CLOSE_RE)
+    close_idx, _ = find_line(lines, HEADER_CLOSE_RE, start_idx)
     if close_idx is None:
         log.warning("Entry has no closing ']' in %s (line %s)", source, len(lines) + 1)
-        return attrs, len(lines), False
+        return {}, len(lines), False
 
-    end_idx = start_idx + close_idx
-    for raw_line in lines[start_idx:end_idx]:
-        raw = raw_line.strip()
-        if raw and "=" in raw:
-            key, value = raw.split("=", 1)
-            attrs[key.strip().lower()] = unquote(value.strip())
-
-    return attrs, end_idx + 1, True
+    return parse_attributes(lines[start_idx:close_idx]), close_idx + 1, True
 
 
 def parse_autolinks(path: Path) -> AutoLinkDictionary:
@@ -337,8 +306,8 @@ def parse_previews(path: Path) -> PreviewDictionary:
         if not header_closed:
             break
 
-        end_rel = find_end_index(lines[i:], PREVIEW_END_RE)
-        if end_rel is None:
+        end_idx, _ = find_line(lines, PREVIEW_END_RE, i)
+        if end_idx is None:
             log.warning(
                 "Link preview entry has no !link_preview_end in %s (line %s)",
                 path,
@@ -346,7 +315,6 @@ def parse_previews(path: Path) -> PreviewDictionary:
             )
             break
 
-        end_idx = i + end_rel
         body_lines = lines[i:end_idx]
         i = end_idx + 1
 

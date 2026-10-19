@@ -1,18 +1,11 @@
 import re
 import xml.etree.ElementTree as etree
 
-from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension
 
 from template_env import static_url
 
-from .block_utils import (
-    find_end_index,
-    find_match_in_lines,
-    has_matching_line,
-    parse_prefix_blocks,
-    push_suffix_block,
-)
+from .blocks import BRACKET_END_RE, Block, DirectiveBlockProcessor, parse_attributes
 
 AI_IMAGE_META = {
     "gen": {
@@ -38,64 +31,18 @@ class ImageExtension(Extension):
         )
 
 
-class ImageBlockProcessor(BlockProcessor):
+class ImageBlockProcessor(DirectiveBlockProcessor):
     START_RE = re.compile(r"^\s*!image\[\s*$")
-    END_RE = re.compile(r"^\s*\]\s*$")
+    END_RE = BRACKET_END_RE
 
-    def test(self, parent, block):
-        return has_matching_line(block, self.START_RE)
-
-    def run(self, parent, blocks):
-        block = blocks.pop(0)
-        lines = block.splitlines()
-
-        start_idx, _ = find_match_in_lines(lines, self.START_RE)
-
-        if start_idx is None:
-            return True
-
-        parse_prefix_blocks(self.parser, parent, lines[:start_idx])
-
-        data: list[str] = []
-        ended = False
-
-        for i in range(start_idx + 1, len(lines)):
-            line = lines[i]
-
-            if self.END_RE.match(line.strip()):
-                push_suffix_block(blocks, lines[i + 1 :])
-                ended = True
-                break
-
-            if line.strip():
-                data.append(line.strip())
-
-        while blocks and not ended:
-            blk = blocks.pop(0)
-            blk_lines = blk.splitlines()
-
-            end_idx = find_end_index(blk_lines, self.END_RE)
-
-            if end_idx is None:
-                for raw in blk_lines:
-                    if raw.strip():
-                        data.append(raw.strip())
-
-                continue
-
-            for raw in blk_lines[:end_idx]:
-                if raw.strip():
-                    data.append(raw.strip())
-
-            push_suffix_block(blocks, blk_lines[end_idx + 1 :])
-            ended = True
-            break
+    def render(self, parent, block: Block):
+        data = block.arguments
 
         if not data:
-            return True
+            return
 
         url = data[0]
-        args = self._parse_args(data[1:])
+        args = parse_attributes(data[1:], unquote_values=False)
 
         wrapper = etree.SubElement(parent, "div")
         wrapper.set("class", self._build_class(args))
@@ -117,21 +64,6 @@ class ImageBlockProcessor(BlockProcessor):
             img.set("loading", "lazy")
 
         self._add_ai_meta(image_content, args)
-
-        return True
-
-    def _parse_args(self, lines):
-        out = {}
-
-        for line in lines:
-            if "=" not in line:
-                continue
-
-            key, value = line.split("=", 1)
-
-            out[key.strip().lower()] = value.strip()
-
-        return out
 
     def _build_class(self, args):
         classes = ["wiki-image"]
@@ -189,36 +121,9 @@ class ImageBlockProcessor(BlockProcessor):
         return f"{value}px" if value.isdigit() else value
 
 
-class ImageFloatBreakProcessor(BlockProcessor):
-    RE = re.compile(r"^\s*!image_float_break\s*$")
+class ImageFloatBreakProcessor(DirectiveBlockProcessor):
+    START_RE = re.compile(r"^\s*!image_float_break\s*$")
 
-    def test(self, parent, block):
-        return has_matching_line(block, self.RE)
-
-    def run(self, parent, blocks):
-        block = blocks.pop(0)
-        lines = block.splitlines()
-
-        idx, _ = find_match_in_lines(lines, self.RE)
-
-        if idx is None:
-            return True
-
-        parse_prefix_blocks(
-            self.parser,
-            parent,
-            lines[:idx],
-        )
-
+    def render(self, parent, block: Block):
         div = etree.SubElement(parent, "div")
-        div.set(
-            "class",
-            "wiki-image-float-break",
-        )
-
-        push_suffix_block(
-            blocks,
-            lines[idx + 1 :],
-        )
-
-        return True
+        div.set("class", "wiki-image-float-break")

@@ -1,9 +1,10 @@
 import re
 
 from markdown.extensions import Extension
-from markdown.preprocessors import Preprocessor
 
 from template_env import static_url
+
+from .blocks import BRACKET_END_RE, Block, DirectivePreprocessor, parse_options
 
 
 class DialogExtension(Extension):
@@ -15,7 +16,9 @@ class DialogExtension(Extension):
         )
 
 
-class DialogPreprocessor(Preprocessor):
+class DialogPreprocessor(DirectivePreprocessor):
+    START_RE = re.compile(r"^!dialog_start\[$")
+    HEADER_END_RE = BRACKET_END_RE
     END_RE = re.compile(r"!dialog_end")
 
     PARTICIPANT_RE = re.compile(
@@ -31,62 +34,12 @@ class DialogPreprocessor(Preprocessor):
         re.VERBOSE,
     )
 
-    OPTION_RE = re.compile(
-        r"""
-        (\w+)
-        =
-        (?:
-            "([^"]+)"
-            |
-            ([^\s]+)
-        )
-        """,
-        re.VERBOSE,
-    )
-
     LINE_RE = re.compile(r"^\s*([^:]+):\s*(.+)$")
     UPDATE_RE = re.compile(r"^\s*@(\w+)\s+(.*)$")
 
-    def run(self, lines):
-        out = []
-        i = 0
-
-        while i < len(lines):
-            line = lines[i].strip()
-
-            if line == "!dialog_start[":
-                header_lines = []
-                body_lines = []
-
-                i += 1
-                while i < len(lines):
-                    if lines[i].strip() == "]":
-                        break
-                    header_lines.append(lines[i])
-                    i += 1
-
-                i += 1
-
-                while i < len(lines) and not self.END_RE.match(lines[i]):
-                    body_lines.append(lines[i])
-                    i += 1
-
-                out.append(
-                    self.render_dialog(
-                        "\n".join(header_lines),
-                        body_lines,
-                    )
-                )
-            else:
-                out.append(lines[i])
-
-            i += 1
-
-        return out
-
-    def render_dialog(self, header, lines):
-        participants = self.parse_participants(header)
-        dialog_lines = self.parse_lines(lines)
+    def render(self, block: Block):
+        participants = self.parse_participants("\n".join(block.header))
+        dialog_lines = self.parse_lines(block.body)
 
         html = ['<div class="dialog">']
 
@@ -116,7 +69,7 @@ class DialogPreprocessor(Preprocessor):
             )
 
         html.append("</div>")
-        return "\n".join(html)
+        return "".join(html)
 
     def parse_participants(self, header):
         participants = {}
@@ -134,9 +87,7 @@ class DialogPreprocessor(Preprocessor):
             side = m.group("side")
             opts_raw = m.group("opts") or ""
 
-            opts = {}
-            for k, v1, v2 in self.OPTION_RE.findall(opts_raw):
-                opts[k] = v1 or v2
+            opts = parse_options(opts_raw)
 
             participants[key] = {
                 "side": side,
@@ -155,9 +106,7 @@ class DialogPreprocessor(Preprocessor):
 
             m = self.UPDATE_RE.match(raw)
             if m:
-                opts = {}
-                for k, v1, v2 in self.OPTION_RE.findall(m.group(2)):
-                    opts[k] = v1 or v2
+                opts = parse_options(m.group(2))
 
                 result.append(
                     {
@@ -212,7 +161,7 @@ class DialogPreprocessor(Preprocessor):
         parts.append(f'<div class="dialog-text">{text}</div>')
         parts.append("</div></div>")
 
-        return "\n".join(parts)
+        return "".join(parts)
 
     def render_system_line(self, text):
         return (
