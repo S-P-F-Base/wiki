@@ -33,7 +33,11 @@ class ButtonBlockProcessor(DirectiveBlockProcessor):
         image = None
 
         if len(data) >= 3:
-            if data[2].lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp")):
+            if (
+                data[2]
+                .lower()
+                .endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"))
+            ):
                 image = data[2]
 
             else:
@@ -53,6 +57,8 @@ class ButtonBlockProcessor(DirectiveBlockProcessor):
             img = etree.SubElement(icon, "img")
             img.set("src", static_url(image))
             img.set("alt", "")
+            img.set("loading", "lazy")
+            img.set("decoding", "async")
 
         meta = etree.SubElement(a, "span")
         meta.set("class", "wiki-button-meta")

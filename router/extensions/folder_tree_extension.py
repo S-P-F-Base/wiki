@@ -17,25 +17,28 @@ class FolderTreePreprocessor(DirectivePreprocessor):
     def render(self, block: Block):
         paths = block.arguments
         tree = {}
+        folders = {path.strip("/") for path in paths if path.endswith("/")}
         for path_str in paths:
             parts = path_str.strip("/").split("/")
             cur = tree
             for part in parts:
                 cur = cur.setdefault(part, {})
 
-        def render(node: dict, prefix: str = "") -> list[str]:
+        def render(node: dict, prefix: str = "", parent: str = "") -> list[str]:
+            def folder_first(item):
+                name, children = item
+                return (not (children or parent + name in folders), name.casefold())
+
             out = []
-            items = sorted(
-                node.items(),
-                key=lambda item: (0 if item[1] else 1, item[0].lower()),
-            )
+            items = sorted(node.items(), key=folder_first)
             for idx, (name, sub) in enumerate(items):
                 last = idx == len(items) - 1
                 connector = "└── " if last else "├── "
-                display = name + ("/" if sub else "")
+                path = parent + name
+                display = name + ("/" if sub or path in folders else "")
                 out.append(f"{prefix}{connector}{display}")
                 ext = "    " if last else "│   "
-                out.extend(render(sub, prefix + ext))
+                out.extend(render(sub, prefix + ext, path + "/"))
 
             return out
 
@@ -43,7 +46,7 @@ class FolderTreePreprocessor(DirectivePreprocessor):
         if len(roots) == 1:
             root = roots.pop()
             lines_tree = [f"/{root}"]
-            for line in render(tree[root], ""):
+            for line in render(tree[root], "", root + "/"):
                 lines_tree.append(" " + line)
 
         else:

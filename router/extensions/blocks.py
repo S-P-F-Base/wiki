@@ -12,7 +12,7 @@ from markdown.preprocessors import Preprocessor
 
 BRACKET_END_RE = re.compile(r"^\s*]\s*$")
 SHORT_HEADER_END_RE = re.compile(r"^\s*(?P<escaped>\\)?]\s*$")
-OPTION_RE = re.compile(r'(\w+)=(?:"([^"]+)"|([^\s]+))')
+OPTION_RE = re.compile(r'(\w+)=(?:"([^"]*)"|([^\s]+))')
 QUOTE_PAIRS = {'"': '"', "'": "'", "«": "»", "„": "“", "“": "”", "”": "“"}
 
 

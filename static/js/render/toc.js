@@ -1,8 +1,18 @@
-document.addEventListener("DOMContentLoaded", () => {
+let wikiTocHashHandler;
+let setActiveWikiToc = function () { };
+function initWikiToc() {
+    if (wikiTocHashHandler) window.removeEventListener("hashchange", wikiTocHashHandler);
+    setActiveWikiToc = function () { };
     const aside = document.querySelector(".toc-panel");
     if (!aside) return;
 
+    const previousScrollTop = aside.scrollTop;
+    const activeHash = aside.querySelector('a.is-active')?.getAttribute('href') || location.hash;
+    const expanded = new Set();
+    for (const button of aside.querySelectorAll('.toc-toggle.is-open')) expanded.add(button.parentElement.querySelector('a')?.getAttribute('href'));
+
     const mdToc = document.querySelector(".content .toc");
+    aside.querySelector(".toc-inner")?.remove();
     if (!mdToc) {
         aside.classList.add("toc-empty");
         return;
@@ -15,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    aside.classList.remove("toc-empty");
     rootUl.classList.add("toc-inner");
     aside.appendChild(rootUl);
     mdToc.remove();
@@ -63,6 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.type = "button";
             btn.className = "toc-toggle";
             btn.textContent = "▸";
+            if (expanded.has(link.getAttribute('href'))) {
+                childUl.classList.remove('toc-collapsed');
+                btn.classList.add('is-open');
+            }
 
             btn.addEventListener("click", e => {
                 e.preventDefault();
@@ -116,11 +131,13 @@ document.addEventListener("DOMContentLoaded", () => {
         setActive(link.getAttribute("href"));
     });
 
-    window.addEventListener("hashchange", () => {
-        setActive(location.hash);
-    });
+    setActiveWikiToc = setActive;
+    wikiTocHashHandler = function () { setActive(location.hash); };
+    window.addEventListener("hashchange", wikiTocHashHandler);
 
-    if (location.hash) {
-        setActive(location.hash);
+    if (activeHash) {
+        setActive(activeHash);
     }
-});
+    aside.scrollTop = previousScrollTop;
+}
+document.addEventListener("DOMContentLoaded", initWikiToc);

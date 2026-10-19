@@ -10,6 +10,20 @@
     word-break: break-word;
 }
 
+.wiki-grid-cell:has(> .wiki-button:only-child),
+.wiki-grid-cell.editor-button-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.content .wiki-grid-cell:has(> .wiki-button:only-child)>.wiki-button,
+.content .wiki-grid-cell.editor-button-cell>.wiki-button {
+    flex: 1;
+    box-sizing: border-box;
+    min-height: 84px;
+    margin: 0;
+}
+
 .wiki-grid-step {
     grid-column: 1 / -1;
     height: 0;

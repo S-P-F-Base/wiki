@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <base href="/wiki/">
+    <title>Предпросмотр</title>
+    {% include "wiki_styles.html" %}
+</head>
+
+<body data-component-preview="true" {% if block_palette %}data-block-palette="true" {% endif %}>
+    <main class="content">{{ content | default('') | safe }}</main>
+    <script src="{{ 'js/render/images.js' | ver }}" data-fallback="{{ 'images/placeholder.svg' | ver }}"></script>
+    <script src="{{ 'js/editor-frame.js' | ver }}"></script>
+    <script src="{{ 'js/editor-frame-source.js' | ver }}"></script>
+    <script src="{{ 'js/render/toc.js' | ver }}"></script>
+    <script src="{{ 'js/render/link-preview.js' | ver }}"></script>
+</body>
+
+</html>

@@ -60,8 +60,8 @@ class ImageBlockProcessor(DirectiveBlockProcessor):
         img.set("src", static_url(url))
         img.set("alt", args.get("alt", ""))
 
-        if args.get("lazy") == "true":
-            img.set("loading", "lazy")
+        img.set("loading", "eager" if args.get("lazy") == "false" else "lazy")
+        img.set("decoding", "async")
 
         self._add_ai_meta(image_content, args)
 

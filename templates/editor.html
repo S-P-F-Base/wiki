@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Вики · Редактор</title>
+    <link rel="stylesheet" href="{{ 'css/editor.css' | ver }}">
+    <link rel="stylesheet" href="{{ 'css/extensions/strikethrough.css' | ver }}">
+    <script src="{{ 'js/editor-preview.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor-grid.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor-pages.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor-media.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor-blocks.js' | ver }}" defer></script>
+    <script src="{{ 'js/editor-settings.js' | ver }}" defer></script>
+</head>
+
+<body>
+    <aside class="navigation">
+        <a class="brand" href="/editor">SPF <span>Вики</span></a>
+        <label class="search-label" for="filter">Навигация</label>
+        <input id="filter" type="search" placeholder="Название или путь…">
+        <div class="navigation-tools"><button id="articles-button" type="button"
+                aria-pressed="true">Страницы</button><button id="templates-button" type="button"
+                aria-pressed="false">Шаблоны</button><button id="links-button" type="button">Автолинки и превью</button>
+        </div>
+        <p id="navigation-hint" hidden>Шаблон вставляется в статьи целиком. Его изменение обновит все вставки.</p>
+        <button id="new-page" type="button">＋ Новая страница</button>
+        <nav id="pages" aria-label="Страницы вики"></nav>
+    </aside>
+    <main class="workspace">
+        <header class="page-toolbar">
+            <div class="page-location">
+                <strong id="page-title">Выбери страницу</strong>
+                <a id="page-url" href="/wiki/" target="_blank" rel="noopener">/wiki/ ↗</a>
+            </div>
+            <div class="toolbar-actions">
+                <button id="undo" type="button" disabled title="Отменить действие">↶</button>
+                <button id="delete-page" type="button" disabled>Удалить страницу</button>
+                <button id="save" type="button" disabled>Сохранить</button>
+            </div>
+        </header>
+        <div class="edit-toolbar" aria-label="Редактирование страницы">
+            <div id="text-tools" class="format-tools">
+                <button type="button" data-format="bold" disabled title="Жирный · Ctrl+B"><b>Ж</b></button>
+                <button type="button" data-format="italic" disabled title="Курсив · Ctrl+I"><i>К</i></button>
+                <button type="button" data-format="strikeThrough" disabled title="Зачёркнутый"><span
+                        class="content"><span class="strikethrough">З</span></span></button>
+                <button type="button" data-format="small" disabled title="Мелкий текст">Мелкий</button>
+                <button type="button" id="redact-text" disabled>Засекретить</button>
+                <button type="button" id="constant-text" disabled>Константа</button>
+                <label class="text-color-tool" title="Цвет текста">Цвет<input id="text-color" type="color"
+                        value="#ffb74d" disabled></label>
+                <button id="text-color-reset" type="button" disabled>Сбросить цвет</button>
+            </div>
+            <button id="toc-toggle" type="button" disabled aria-pressed="false">Оглавление</button>
+            <button id="notes-button" type="button" disabled>Сноски</button>
+            <button id="flow-break" type="button" disabled title="Следующий блок начнётся под изображением">↵</button>
+            <button id="add-block" type="button">＋ Добавить блок</button>
+            <span class="toolbar-hint">Двойной щелчок: текст · ПКМ: действия с блоком</span>
+        </div>
+        <p id="status" role="status" aria-live="polite">Загрузка страниц…</p>
+        <iframe id="page-view" title="Страница вики"
+            sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>
+    </main>
+    <dialog id="metadata-panel" class="metadata-dialog" aria-labelledby="metadata-title">
+        <header class="panel-header">
+            <div>
+                <h1 id="metadata-title">Метаданные</h1>
+                <p id="file-path"></p>
+            </div>
+            <button id="close-metadata" type="button" aria-label="Закрыть настройки">×</button>
+        </header>
+        <form id="metadata-form">
+            <fieldset id="metadata-fields" disabled>
+                <label>Название страницы<input name="title" autocomplete="off"></label>
+                <label>Авторы<input name="author" placeholder="Имена через запятую"></label>
+                <label>Фоновое изображение<input name="background" type="hidden"><span id="background-name">Не
+                        выбран</span><button type="button" data-media-field="background">Выбрать
+                        изображение</button><button type="button" data-clear-field="background">Убрать
+                        фон</button></label>
+                <h2>В списках страниц</h2>
+                <label>Изображение кнопки<input name="buttonimage" type="hidden"><span id="buttonimage-name">Не
+                        выбрано</span><button type="button" data-media-field="buttonimage">Выбрать
+                        изображение</button><button type="button" data-clear-field="buttonimage">Убрать
+                        изображение</button></label>
+                <label>Описание кнопки<input name="buttondesc"></label>
+                <h2>Использование ИИ</h2>
+                <label>Текст<select name="aitext">
+                        <option value="">Не указано</option>
+                        <option value="none">Без ИИ</option>
+                        <option value="edit">Редактура с ИИ</option>
+                        <option value="gen">Генерация с ИИ</option>
+                    </select></label>
+                <label>Изображения<select name="aiart">
+                        <option value="">Не указано</option>
+                        <option value="none">Без ИИ</option>
+                        <option value="gen">Генерация с ИИ</option>
+                    </select></label>
+            </fieldset>
+            <footer class="panel-actions">
+                <button id="reset" type="button" disabled>Отменить изменения</button>
+                <button type="button" data-close-dialog>Готово</button>
+            </footer>
+        </form>
+    </dialog>
+    <div id="context-menu" class="context-menu" role="menu" hidden></div>
+    <dialog id="card-dialog">
+        <form id="card-form">
+            <h2>Цвет карточки</h2>
+            <label>Выбрать цвет<input id="card-picker" type="color" value="#ff9800"></label>
+            <label>Или вписать цвет<input id="card-color" placeholder="#ff9800, orange, rgb(255, 152, 0)"></label>
+            <button id="card-color-reset" type="button">Цвет по умолчанию</button>
+            <footer class="dialog-actions"><button type="button" data-close-dialog>Закрыть</button><button
+                    type="submit">Применить</button></footer>
+        </form>
+    </dialog>
+    <dialog id="media-dialog" class="media-dialog">
+        <header class="panel-header">
+            <h2>Изображения</h2><button type="button" data-close-dialog aria-label="Закрыть">×</button>
+        </header>
+        <div class="media-tools">
+            <input id="media-filter" type="search" placeholder="Найти изображение…" aria-label="Поиск изображения">
+            <nav id="media-breadcrumbs" aria-label="Папка изображений"></nav>
+        </div>
+        <div class="media-upload-tools">
+            <label>Папка загрузки <span class="field-hint">относительно images/</span><input id="upload-folder"
+                    placeholder="Например organisations/SierraBiotech"></label>
+            <label class="upload-button">Загрузить с компьютера<input id="media-upload" type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
+        </div>
+        <p id="media-status" role="status"></p>
+        <div id="media-grid" class="media-grid"></div>
+        <form id="image-form">
+            <div class="image-options">
+                <label>Описание<input id="image-alt" placeholder="Что изображено"></label>
+                <label>Ширина<input id="image-width" placeholder="Автоматически"></label>
+                <label>Расположение<select id="image-align">
+                        <option value="">В тексте</option>
+                        <option value="left">Слева</option>
+                        <option value="center">По центру</option>
+                        <option value="right">Справа</option>
+                    </select></label>
+                <label>Использование ИИ<select id="image-ai">
+                        <option value="">Не указано</option>
+                        <option value="none">Без ИИ</option>
+                        <option value="gen">Сгенерировано с ИИ</option>
+                    </select></label>
+            </div>
+            <footer class="dialog-actions"><span id="selected-image">Выбери изображение</span><button type="button"
+                    data-close-dialog>Отмена</button><button id="use-image" type="submit" disabled>Использовать</button>
+            </footer>
+        </form>
+    </dialog>
+    <dialog id="inline-dialog">
+        <form id="inline-form">
+            <h2 id="inline-title">Фрагмент текста</h2><label id="inline-text-label">Текст<input
+                    id="inline-text"></label><label id="inline-constant-label">Константа<select
+                    id="inline-constant"></select></label>
+            <footer class="dialog-actions"><button type="button" data-close-dialog>Отмена</button><button
+                    type="submit">Применить</button></footer>
+        </form>
+    </dialog>
+    <dialog id="block-dialog" class="block-dialog">
+        <header class="panel-header">
+            <h2 id="block-title">Настройки блока</h2><button type="button" data-close-dialog
+                aria-label="Закрыть">×</button>
+        </header>
+        <div class="block-workspace">
+            <div id="block-fields"></div>
+            <section class="block-preview"><span>Предпросмотр</span><iframe id="block-preview-frame"
+                    title="Предпросмотр блока" sandbox="allow-scripts"></iframe></section>
+        </div>
+        <footer class="dialog-actions"><button type="button" data-close-dialog>Готово</button></footer>
+    </dialog>
+    <dialog id="block-palette" class="block-palette">
+        <header class="panel-header">
+            <h2>Добавить блок</h2><button type="button" data-close-dialog aria-label="Закрыть">×</button>
+        </header>
+        <div class="palette-placement"><label>Расположение<select id="block-placement"></select></label></div>
+        <p id="palette-status" role="status">Загрузка образцов…</p>
+        <iframe id="palette-samples" title="Блоки в стиле вики" sandbox="allow-scripts"></iframe>
+    </dialog>
+    <dialog id="new-page-dialog">
+        <form id="new-page-form">
+            <h2 id="new-page-heading">Новая страница</h2><label>Название<input id="new-page-title" required
+                    autocomplete="off"></label><label>Раздел<select id="new-page-folder"></select></label>
+            <details>
+                <summary>Имя файла</summary><label>Имя<input id="new-page-slug" required autocomplete="off"></label>
+            </details>
+            <p id="new-page-address"></p>
+            <p id="new-page-status" role="status"></p>
+            <footer class="dialog-actions"><button type="button" data-close-dialog>Отмена</button><button
+                    type="submit">Создать</button></footer>
+        </form>
+    </dialog>
+    <dialog id="templates-dialog" class="templates-dialog">
+        <header class="panel-header">
+            <h2>Вставить шаблон</h2><button type="button" data-close-dialog aria-label="Закрыть">×</button>
+        </header>
+        <p class="dialog-hint">Изменение шаблона обновит все страницы, которые его используют.</p>
+        <div id="templates-list"></div>
+        <p id="template-status" role="status"></p>
+    </dialog>
+    <dialog id="links-dialog" class="links-dialog">
+        <header class="panel-header">
+            <h2>Автолинки и превью ссылок</h2><button type="button" data-close-dialog aria-label="Закрыть">×</button>
+        </header>
+        <div class="settings-layout">
+            <section>
+                <div class="settings-tabs"><button type="button" id="tab-autolinks">Автолинки</button><button
+                        type="button" id="tab-previews">Превью</button></div>
+                <div id="link-entries"></div><button id="add-link-entry" type="button">Добавить</button>
+            </section>
+            <section class="settings-preview"><label>Проверочный текст<input id="link-example"
+                        value="Пример текста"></label><label>Адрес ссылки для примера (необязательно)<input
+                        id="link-example-href" placeholder="Выбери запись или вставь адрес"></label><iframe
+                    id="link-preview-frame" title="Результат автолинков и превью" sandbox="allow-scripts"></iframe>
+            </section>
+        </div>
+        <footer class="dialog-actions"><span id="settings-status" role="status"></span><button id="save-links"
+                type="button">Сохранить настройки</button></footer>
+    </dialog>
+    <dialog id="notes-dialog" class="notes-dialog">
+        <header class="panel-header">
+            <h2>Сноски страницы</h2><button type="button" data-close-dialog aria-label="Закрыть">×</button>
+        </header>
+        <p class="dialog-hint">Сначала поставь курсор в тексте, затем вставь ссылку на нужную сноску. Одна сноска может
+            использоваться несколько раз.</p>
+        <div id="notes-list"></div>
+        <button id="add-note" type="button">Добавить сноску</button>
+    </dialog>
+</body>
+
+</html>

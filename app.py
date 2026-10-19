@@ -33,6 +33,10 @@ for router in [
 
 
 if LOCAL_RUN:
+    from router.wiki_editor import router as wiki_editor_router
+
+    app.include_router(wiki_editor_router)
+
     app.mount(
         "/static",
         StaticFiles(directory="static"),

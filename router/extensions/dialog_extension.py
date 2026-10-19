@@ -150,7 +150,7 @@ class DialogPreprocessor(DirectivePreprocessor):
 
         if avatar and side != "center":
             parts.append(
-                f'<div class="dialog-avatar"><img src="{static_url(avatar)}"></div>'
+                f'<div class="dialog-avatar"><img loading="lazy" decoding="async" src="{static_url(avatar)}"></div>'
             )
 
         parts.append('<div class="dialog-bubble">')
