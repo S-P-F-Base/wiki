@@ -376,6 +376,7 @@ document.addEventListener("pointerdown", function (event) {
 document.addEventListener("input", onEditorInput);
 document.addEventListener("focusout", function (event) {
     if (event.target !== editing) return;
+    rememberSelectionOffsets();
     textChanged();
     editing.removeAttribute("contenteditable");
     editing = null;
@@ -523,11 +524,14 @@ window.addEventListener("message", function (event) {
 
 let rememberedRange = null;
 let rememberedTextId = "";
+let rememberedOffsets = null;
 document.addEventListener("selectionchange", function () {
     const selection = window.getSelection();
-    if (!editing || !selection.rangeCount || !editing.contains(selection.anchorNode)) return;
+    if (!editing || !document.hasFocus() || !selection.rangeCount ||
+        !editing.contains(selection.anchorNode) || !editing.contains(selection.focusNode)) return;
     rememberedRange = selection.getRangeAt(0).cloneRange();
     rememberedTextId = editing.dataset.editorId;
+    rememberedOffsets = null;
     tellParent({
         type: "wiki-selection",
         id: rememberedTextId,
@@ -536,9 +540,46 @@ document.addEventListener("selectionchange", function () {
     });
 });
 
+function rememberSelectionOffsets() {
+    if (rememberedTextId !== editing.dataset.editorId || !rememberedRange ||
+        !editing.contains(rememberedRange.commonAncestorContainer)) return;
+    const prefix = document.createRange();
+    prefix.selectNodeContents(editing);
+    prefix.setEnd(rememberedRange.startContainer, rememberedRange.startOffset);
+    const start = prefix.toString().length;
+    rememberedOffsets = {
+        start,
+        end: start + rememberedRange.toString().length
+    };
+}
+
+function rangeAtTextOffsets(target, offsets) {
+    const range = document.createRange();
+    range.selectNodeContents(target);
+    range.collapse(false);
+    const nodes = document.createTreeWalker(target, NodeFilter.SHOW_TEXT);
+    let position = 0;
+    let started = false;
+    while (nodes.nextNode()) {
+        const node = nodes.currentNode;
+        const end = position + node.textContent.length;
+        if (!started && offsets.start <= end) {
+            range.setStart(node, Math.max(0, offsets.start - position));
+            started = true;
+        }
+        if (offsets.end <= end) {
+            range.setEnd(node, Math.max(0, offsets.end - position));
+            break;
+        }
+        position = end;
+    }
+    return range;
+}
+
 function restoreEditing(id) {
     const target = document.querySelector('[data-editor-id="' + id + '"]');
     if (!target || !["text", "heading"].includes(editorKinds[id])) return false;
+    const offsets = rememberedTextId === id ? rememberedOffsets : null;
     if (editing !== target) {
         editing?.blur();
         editing = target;
@@ -548,7 +589,10 @@ function restoreEditing(id) {
         target.focus();
     }
     const selection = window.getSelection();
-    if (rememberedRange && rememberedTextId === id && target.contains(rememberedRange
+    if (offsets) {
+        selection.removeAllRanges();
+        selection.addRange(rangeAtTextOffsets(target, offsets));
+    } else if (rememberedRange && rememberedTextId === id && target.contains(rememberedRange
         .commonAncestorContainer)) {
         selection.removeAllRanges();
         selection.addRange(rememberedRange);
