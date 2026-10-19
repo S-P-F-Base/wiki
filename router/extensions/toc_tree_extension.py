@@ -32,6 +32,9 @@ class TocTreeExtension(Extension):
 
         md.registerExtension(self)
 
+    def reset(self):
+        self.toc_requested = False
+
 
 def slugify(text: str) -> str:
     base = re.sub(r"[^\w\- ]+", "", text, flags=re.UNICODE)

@@ -1,4 +1,5 @@
 from pathlib import Path
+from threading import Lock
 
 from markdown import Markdown
 
@@ -32,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 WIKI_DIR = BASE_DIR / "wiki"
 
 
-def get_markdown_eng() -> Markdown:
+def _create_markdown_eng() -> Markdown:
     return Markdown(
         extensions=[
             # ---
@@ -65,6 +66,15 @@ def get_markdown_eng() -> Markdown:
             WikiMetaExtension(),  # Заголовки-мета в начале файла (например, автор, дата)
         ],
     )
+
+
+_MARKDOWN_ENGINE = _create_markdown_eng()
+_MARKDOWN_LOCK = Lock()
+
+
+def get_markdown_eng() -> Markdown:
+    """Return the shared engine; render pages through get_wiki_page for thread safety."""
+    return _MARKDOWN_ENGINE
 
 
 AI_TEXT_DESP = {
@@ -109,12 +119,18 @@ def get_wiki_page(
     str | None,
     str | None,
 ]:
-    md = get_markdown_eng()
-    setattr(md, "current_file", md_path)  # noqa: B010
+    with _MARKDOWN_LOCK:
+        md = get_markdown_eng()
+        md.reset()
+        setattr(md, "current_file", md_path)  # noqa: B010
+        try:
+            rendered_html = md.convert(content)
+            meta: dict[str, str] = getattr(md, "wiki_meta", {}).copy()
 
-    rendered_html = md.convert(content)
-
-    meta: dict[str, str] = getattr(md, "wiki_meta", {})
+        finally:
+            md.reset()
+            md.parser.state.clear()
+            setattr(md, "current_file", None)  # noqa: B010
 
     title = meta.get("title", "ЗАБЫЛИ НАИМЕНОВАНИЕ УСТАНОВИТЬ")
 

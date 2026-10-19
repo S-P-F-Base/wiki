@@ -561,9 +561,6 @@ def build_index():
         encoding="utf-8",
     )
 
-    print(f"Indexed {len(pages)} pages")
-    print(f"Hash: {digest}")
-
 
 def is_index_stale() -> bool:
     if not INDEX_FILE.exists():

@@ -12,12 +12,16 @@ META_LINE_RE = re.compile(r"^([A-Za-z][A-Za-z0-9_]*)\s*:\s*(.+)$")
 
 class WikiMetaExtension(Extension):
     def extendMarkdown(self, md):
+        self.md = md
         md.registerExtension(self)
         md.preprocessors.register(
             WikiMetaPreprocessor(md),
             "wiki_meta",
             1000,
         )
+
+    def reset(self):
+        setattr(self.md, "wiki_meta", {})  # noqa: B010
 
 
 class WikiMetaPreprocessor(Preprocessor):

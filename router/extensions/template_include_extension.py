@@ -14,9 +14,14 @@ TEMPLATE_DIR = Path("wiki/_tech/template")
 
 class TemplateIncludeExtension(Extension):
     def extendMarkdown(self, md):
+        self.md = md
+        md.registerExtension(self)
         md.preprocessors.register(
             TemplateIncludePreprocessor(md), "template_include", 15
         )
+
+    def reset(self):
+        setattr(self.md, "wiki_heading_sequence", [])  # noqa: B010
 
 
 class TemplateIncludePreprocessor(Preprocessor):
