@@ -1,6 +1,6 @@
 Title: Афрофрукт
 Author: Cain
-Date: 3 Октября 2026 г.
+Date: 19 Октября 2026 г.
 Background: images/wallpaper.jpeg
 ButtonImage: images/organisations/SierraBiotech/projects/afrofruit/fruit_whole.webp
 ButtonDesc: Искусственно выведенная вьющаяся плодовая культура с сердцевидными плодами

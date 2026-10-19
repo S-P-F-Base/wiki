@@ -1,6 +1,6 @@
 Title: Sierra Biotech
 Author: Cain
-Date: 3 Октября 2026 г.
+Date: 19 Октября 2026 г.
 Background: images/wallpaper.jpeg
 ButtonImage: images/organisations/SierraBiotech/logo_small.webp
 ButtonDesc: Биотехнологическая исследовательская организация
